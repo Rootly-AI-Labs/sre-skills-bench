@@ -10,4 +10,4 @@ simplify the benchmark setup.
 | GMCQ-hard | understanding | mcq | choose the correct code diff that closes a PR, with additions and removals |
 | Reverse-QA | text generation | LLM-as-a-judge | generate an issue title and body given code diff |
 | MPR-Gen | code generation | LLM-as-a-judge | given a maksed section of a code diff, generate the code |
-
+| Reverse-QA-Hallu | hallucination detection | HHEM 2.1 | uses Vectara to determine whether the model hallucinated |
