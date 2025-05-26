@@ -20,7 +20,7 @@ simplify the benchmark setup.
 | --- | --- |
 | llama-3.3-70b-versatile (Groq) | 0.826 |
 | o3-mini |  0.920 |
-| opus-4 | 0.786 (partial results) |
+| opus-4 | 0.812 |
 | sonnet-4| 0.878 | 
 
 ### GMCQ-Hard (v0.2)
@@ -38,5 +38,5 @@ simplify the benchmark setup.
 | --- | --- |
 | llama-3.3-70b-versatile (Groq) | 1.69 +/- 1.37 |
 | o3-mini | 1.56 +/- 1.12  |
-| opus-4 |  |
+| opus-4 | 1.88 +/- 1.93 |
 | sonnet-4| 1.58 +/- 1.40 | 
