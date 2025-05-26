@@ -11,3 +11,32 @@ simplify the benchmark setup.
 | Yes ✅| Not yet| Reverse-QA | text generation | LLM-as-a-judge | generate an issue title and body given code diff |
 | Not yet | Not yet | MPR-Gen | code generation | LLM-as-a-judge | given a maksed section of a code diff, generate the code |
 | Not yet | Not yet | Reverse-QA-Hallu | hallucination detection | Lynx-8B | uses Lynx-8B to determine whether the model hallucinated |
+
+## Prototype-Ready Results
+
+### GMCQ-Easy
+
+| Model Name | Score |
+| --- | --- |
+| llama-3.3-70b-versatile (Groq) | 0.826 |
+| o3-mini |  0.920 |
+| opus-4 |  |
+| sonnet-4| 0.878 | 
+
+### GMCQ-Hard
+
+| Model Name | Score |
+| --- | --- |
+| llama-3.3-70b-versatile (Groq) | 0.362 |
+| o3-mini |   |
+| opus-4 |  |
+| sonnet-4|  | 
+
+### Reverse QA
+
+| Model Name | Score |
+| --- | --- |
+| llama-3.3-70b-versatile (Groq) | 0.169 |
+| o3-mini |  |
+| opus-4 |  |
+| sonnet-4|  | 
