@@ -14,7 +14,7 @@ simplify the benchmark setup.
 
 ## Prototype-Ready Results
 
-### GMCQ-Easy
+### GMCQ-Easy (v0.1)
 
 | Model Name | Score |
 | --- | --- |
@@ -23,7 +23,7 @@ simplify the benchmark setup.
 | opus-4 |  |
 | sonnet-4| 0.878 | 
 
-### GMCQ-Hard
+### GMCQ-Hard (v0.1)
 
 | Model Name | Score |
 | --- | --- |
@@ -32,7 +32,7 @@ simplify the benchmark setup.
 | opus-4 |  |
 | sonnet-4|  | 
 
-### Reverse QA
+### Reverse QA (v0.1)
 
 | Model Name | Score |
 | --- | --- |
