@@ -28,7 +28,7 @@ simplify the benchmark setup.
 | Model Name | Score |
 | --- | --- |
 | llama-3.3-70b-versatile (Groq) | 0.362 |
-| o3-mini |   |
+| o3-mini | 0.732 |
 | opus-4 |  |
 | sonnet-4| 0.784 | 
 
