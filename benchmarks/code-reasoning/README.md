@@ -30,13 +30,13 @@ simplify the benchmark setup.
 | llama-3.3-70b-versatile (Groq) | 0.362 |
 | o3-mini |   |
 | opus-4 |  |
-| sonnet-4|  | 
+| sonnet-4| 0.784 | 
 
 ### Reverse QA (v0.1)
 
 | Model Name | Score |
 | --- | --- |
-| llama-3.3-70b-versatile (Groq) | 0.169 |
-| o3-mini |  |
+| llama-3.3-70b-versatile (Groq) | 1.69 +/- 1.37 |
+| o3-mini | 1.56 +/- 1.12  |
 | opus-4 |  |
 | sonnet-4|  | 
