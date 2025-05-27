@@ -16,6 +16,8 @@ simplify the benchmark setup.
 
 ### GMCQ-Easy (v0.2)
 
+Higher score is better. (0 to 1)
+
 | Model Name | Score |
 | --- | --- |
 | llama-3.3-70b-versatile (Groq) | 0.826 |
@@ -24,6 +26,8 @@ simplify the benchmark setup.
 | sonnet-4| 0.878 | 
 
 ### GMCQ-Hard (v0.2)
+
+Higer score is better. (0 to 1)
 
 | Model Name | Score |
 | --- | --- |
@@ -34,6 +38,8 @@ simplify the benchmark setup.
 
 ### Reverse QA (v0.2)
 
+Higher score is better. (0 to 10)
+
 | Model Name | Score |
 | --- | --- |
 | llama-3.3-70b-versatile (Groq) | 1.69 +/- 1.37 |
@@ -42,6 +48,8 @@ simplify the benchmark setup.
 | sonnet-4| 1.58 +/- 1.40 | 
 
 ### Reverse QA-Hallu (v0.2)
+
+Lower score is better (0% to 100%)
 
 | Model Name | Hallucination Rate |
 | --- | --- |
