@@ -53,7 +53,7 @@ Lower score is better (0% to 100%)
 
 | Model Name | Hallucination Rate |
 | --- | --- |
-| llama-3.3-70b-versatile (Groq) | 78.4% |
+| llama-3.3-70b-versatile (Together) | 79.8% |
 | o3-mini |   |
 | opus-4 |  |
 | sonnet-4| 73.7% | 
