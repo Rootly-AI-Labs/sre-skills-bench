@@ -54,7 +54,7 @@ Lower score is better (0% to 100%)
 | Model Name | Hallucination Rate |
 | --- | --- |
 | llama-3.3-70b-versatile (Together) | 79.8% |
-| o3-mini |   |
+| o3-mini | 82.6% |
 | opus-4 | 74.2% |
 | sonnet-4| 73.7% | 
 
@@ -67,4 +67,4 @@ Higher is better (0 to 10)
 | llama-3.3-70b-versatile (Together) | 6.625 +/- 2.76 |
 | o3-mini |   |
 | opus-4 |  |
-| sonnet-4| | 
+| sonnet-4| 7.16 +/- 2.70  |  
