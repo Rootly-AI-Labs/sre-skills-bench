@@ -65,6 +65,6 @@ Higher is better (0 to 10)
 | Model Name | Score |
 | --- | --- |
 | llama-3.3-70b-versatile (Together) | 6.625 +/- 2.76 |
-| o3-mini |   |
-| opus-4 |  |
+| o3-mini | 6.98 +/- 2.28  |
+| opus-4 | 6.90 +/- 2.49 |
 | sonnet-4| 7.16 +/- 2.70  |  
