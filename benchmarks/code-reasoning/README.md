@@ -64,7 +64,7 @@ Higher is better (0 to 10)
 
 | Model Name | Score |
 | --- | --- |
-| llama-3.3-70b-versatile (Groq) | 6.625 +/- 2.76 |
+| llama-3.3-70b-versatile (Together) | 6.625 +/- 2.76 |
 | o3-mini |   |
 | opus-4 |  |
 | sonnet-4| | 
