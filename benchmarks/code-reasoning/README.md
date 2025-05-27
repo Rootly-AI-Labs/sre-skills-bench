@@ -20,7 +20,7 @@ Higher score is better. (0 to 1)
 
 | Model Name | Score |
 | --- | --- |
-| llama-3.3-70b-versatile (Groq) | 0.826 |
+| llama-3.3-70b-versatile (Together) | 0.817 |
 | o3-mini |  0.920 |
 | opus-4 | 0.812 |
 | sonnet-4| 0.878 | 
@@ -31,7 +31,7 @@ Higer score is better. (0 to 1)
 
 | Model Name | Score |
 | --- | --- |
-| llama-3.3-70b-versatile (Groq) | 0.362 |
+| llama-3.3-70b-versatile (Together) | 0.404 |
 | o3-mini | 0.732 |
 | opus-4 | 0.873 |
 | sonnet-4| 0.784 | 
