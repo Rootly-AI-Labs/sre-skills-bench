@@ -40,3 +40,12 @@ simplify the benchmark setup.
 | o3-mini | 1.56 +/- 1.12  |
 | opus-4 | 1.88 +/- 1.93 |
 | sonnet-4| 1.58 +/- 1.40 | 
+
+### Reverse QA-Hallu (v0.2)
+
+| Model Name | Hallucination Rate |
+| --- | --- |
+| llama-3.3-70b-versatile (Groq) | 78.4% |
+| o3-mini |   |
+| opus-4 |  |
+| sonnet-4|  | 
