@@ -55,7 +55,7 @@ Lower score is better (0% to 100%)
 | --- | --- |
 | llama-3.3-70b-versatile (Together) | 79.8% |
 | o3-mini |   |
-| opus-4 |  |
+| opus-4 | 74.2% |
 | sonnet-4| 73.7% | 
 
 ### MPR-Gen (v0.2)
