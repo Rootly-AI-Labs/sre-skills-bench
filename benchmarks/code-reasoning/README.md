@@ -10,7 +10,7 @@ simplify the benchmark setup.
 | Yes ✅| Not yet | GMCQ-hard | understanding | mcq | choose the correct code diff that closes a PR, with additions and removals |
 | Yes ✅| Not yet| Reverse-QA | text generation | LLM-as-a-judge | generate an issue title and body given code diff |
 | Yes ✅ | Not yet | MPR-Gen | code generation | LLM-as-a-judge | given a maksed section of a code diff, generate the code |
-| Yes ✅ | Not yet | Reverse-QA-Hallu | hallucination detection | LLM-as-a-judge | uses Lynx-8B to determine whether the model hallucinated |
+| Yes ✅ | Not yet | Reverse-QA-Hallu | hallucination detection | LLM-as-a-judge | uses an LLM-as-a-judge to determine whether the model hallucinated |
 
 ## Prototype-Ready Results
 
