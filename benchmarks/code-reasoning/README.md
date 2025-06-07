@@ -12,7 +12,7 @@ simplify the benchmark setup.
 | Yes ✅ | Not yet | MPR-Gen | code generation | LLM-as-a-judge | given a maksed section of a code diff, generate the code |
 | Yes ✅ | Not yet | Reverse-QA-Hallu | hallucination detection | LLM-as-a-judge | uses an LLM-as-a-judge to determine whether the model hallucinated |
 
-## Prototype-Ready Results
+## Prototype-Ready Results (v0.2)
 
 ### GMCQ-Easy (v0.2)
 
