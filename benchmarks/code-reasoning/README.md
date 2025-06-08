@@ -12,15 +12,15 @@ simplify the benchmark setup.
 | Yes ✅ | Not yet | MPR-Gen | code generation | LLM-as-a-judge | given a maksed section of a code diff, generate the code |
 | Yes ✅ | Not yet | Reverse-QA-Hallu | hallucination detection | LLM-as-a-judge | uses an LLM-as-a-judge to determine whether the model hallucinated |
 
-## Latest Results (v0.3)
-
-### Overall Results (v0.3)
+## Overall Results (v0.3)
 
 | Model Name                   | GMCQ-Easy | GMCQ-Hard | MPR-Gen | Reverse-QA | Reverse-QA-Hallu | EFCB Score |
 |------------------------------|----------|--------|-------------|--------|-----------|--------|
 | together/llama-3.3-70b-turbo |    0.803 |  0.476 |   3.74 |  7.23   | 0.965 |   0.482 |
 | openai/o4-mini               |    0.892 |  0.868 |    3.67 |   7.41 |    0.946 |    0.584 |
 
+
+## Detailed Results (v0.3)
 
 ### GMCQ-Easy (v0.3)
 
