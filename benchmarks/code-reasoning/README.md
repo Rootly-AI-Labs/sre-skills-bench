@@ -1,4 +1,4 @@
-# Environment-Free Coding Benchmark
+# Environment-Free Coding Benchmark ⚗️
 
 This coding benchmark aims to offer robust and challenging tasks to evaluate
 language models on, without requiring the need to use a coding environment to
@@ -12,7 +12,7 @@ simplify the benchmark setup.
 | Yes ✅ | Not yet | MPR-Gen | code generation | LLM-as-a-judge | given a maksed section of a code diff, generate the code |
 | Yes ✅ | Not yet | Reverse-QA-Hallu | hallucination detection | LLM-as-a-judge | uses an LLM-as-a-judge to determine whether the model hallucinated |
 
-## Overall Results (v0.3)
+## Overall Results (v0.3) 🏆
 
 | Model Name                   | GMCQ-Easy | GMCQ-Hard | MPR-Gen | Reverse-QA | Reverse-QA-Hallu | EFCB Score |
 |------------------------------|----------|--------|-------------|--------|-----------|--------|
@@ -20,7 +20,7 @@ simplify the benchmark setup.
 | openai/o4-mini               |    0.892 |  0.868 |    3.67 |   7.41 |    0.946 |    0.584 |
 
 
-## Detailed Results (v0.3)
+## Detailed Results (v0.3) 📊
 
 ### GMCQ-Easy (v0.3)
 
