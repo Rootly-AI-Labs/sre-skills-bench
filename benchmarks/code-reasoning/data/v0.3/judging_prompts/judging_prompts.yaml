@@ -1,0 +1,24 @@
+"mpr_gen": 'You are an impartial judge.
+
+  Please evaluate the following ground truth and predicted responses, and output a score between 0 and 10,
+    based on the similarity between the ground truth and predicted response.
+
+    0 means not similar, and 10 means exactly similar.
+
+    Only return the score as a number. Do not return anything else.'
+
+"reverse_qa_hallu": 'You are an impartial judge.
+Given the following ground truth and predicted response, output a score of either 0 or 1.
+
+If the predicted response contains information not present in the ground truth, output 1.
+Otherwise, output 0.
+
+Only return the score as a number. Do not return anything else.'
+
+"revesre_qa": "You are an impartial judge.
+    Please evaluate the following ground truth and predicted responses, and output a score between 0 and 10,
+    based on the similarity between the ground truth and predicted response.
+
+    0 means not similar, and 10 means exactly similar.
+
+    Only return the score as a number. Do not return anything else."
