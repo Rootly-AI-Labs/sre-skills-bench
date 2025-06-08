@@ -12,59 +12,48 @@ simplify the benchmark setup.
 | Yes ✅ | Not yet | MPR-Gen | code generation | LLM-as-a-judge | given a maksed section of a code diff, generate the code |
 | Yes ✅ | Not yet | Reverse-QA-Hallu | hallucination detection | LLM-as-a-judge | uses an LLM-as-a-judge to determine whether the model hallucinated |
 
-## Prototype-Ready Results (v0.2)
+## Latest Results (v0.3)
 
-### GMCQ-Easy (v0.2)
+### Overall Results (v0.3)
 
-Higher score is better. (0 to 1)
+| Model Name                   | GMCQ-Easy | GMCQ-Hard | MPR-Gen | Reverse-QA | Reverse-QA-Hallu | EFCB Score |
+|------------------------------|----------|--------|-------------|--------|-----------|--------|--------------------|
+| together/llama-3.3-70b-turbo |    0.803 |  0.476 |   3.74 |  7.23   | 0.965 |   0.482 |
+| openai/o4-mini               |    0.892 |  0.868 |    3.67 |   7.41 |    0.946 |    0.584 |
 
-| Model Name | Score |
-| --- | --- |
-| o3-mini |  0.920 |
-| sonnet-4| 0.878 | 
-| Llama-3.3-70B-Instruct-Turbo (Together) | 0.817 |
-| opus-4 | 0.812 |
 
-### GMCQ-Hard (v0.2)
+### GMCQ-Easy (v0.3)
 
-Higer score is better. (0 to 1)
+| Model Name                   | mastodon | indigo | cloudflared | duckdb | tailscale | chroma | unweighted average |
+|------------------------------|----------|--------|-------------|--------|-----------|--------|--------------------|
+| together/llama-3.3-70b-turbo |    0.912 |  0.699 |       0.845 |    0.8 |     0.759 |  0.801 |              0.803 |
+| openai/o4-mini               |    0.975 |  0.869 |       0.872 |  0.893 |     0.824 |  0.918 |              0.892 |
+| anthropic/claude-4-sonnet    |     0.95 |  0.801 |       0.851 |  0.856 |     0.786 |  0.862 |              0.851 |
 
-| Model Name | Score |
-| --- | --- |
-| opus-4 | 0.873 |
-| sonnet-4| 0.784 | 
-| o3-mini | 0.732 |
-| Llama-3.3-70B-Instruct-Turbo (Together) | 0.404 |
+### GMCQ-Hard (v0.3)
 
-### Reverse QA (v0.2)
+| Model Name                   | mastodon | indigo | cloudflared | duckdb | tailscale | chroma | unweighted average |
+|------------------------------|----------|--------|-------------|--------|-----------|--------|--------------------|
+| together/llama-3.3-70b-turbo |    0.452 |  0.392 |       0.574 |   0.47 |     0.465 |    0.5 |              0.476 |
+| openai/o4-mini               |    0.883 |  0.824 |       0.919 |  0.879 |     0.834 |  0.867 |              0.868 |
 
-Higher score is better. (0 to 10)
+### MPR-Gen (v0.3)
 
-| Model Name | Score |
-| --- | --- |
-| opus-4 | 1.88 +/- 1.93 |
-| Llama-3.3-70B-Instruct-Turbo (Together) | 1.70 +/- 1.33 |
-| sonnet-4| 1.58 +/- 1.40 | 
-| o3-mini | 1.56 +/- 1.12  |
+| Model Name                   | mastodon | indigo | cloudflared | duckdb | tailscale | chroma | unweighted average |
+|------------------------------|----------|--------|-------------|--------|-----------|--------|--------------------|
+| together/llama-3.3-70b-turbo |     7.48 |    6.9 |        6.88 |   7.18 |       7.5 |   7.45 |               7.23 |
+| openai/o4-mini               |      7.5 |   7.35 |        7.49 |   7.29 |      7.73 |   7.11 |               7.41 |
 
-### Reverse QA-Hallu (v0.2)
+### Reverse-QA (v0.3)
 
-Lower score is better (0% to 100%)
+| Model Name                   | mastodon | indigo | cloudflared | duckdb | tailscale | chroma | unweighted average |
+|------------------------------|----------|--------|-------------|--------|-----------|--------|--------------------|
+| together/llama-3.3-70b-turbo |     3.94 |    3.4 |        4.01 |   3.97 |      3.84 |   3.28 |              3.740 |
+| openai/o4-mini               |     4.26 |   3.36 |        4.07 |    3.4 |      3.74 |   3.18 |              3.668 |
 
-| Model Name | Hallucination Rate |
-| --- | --- |
-| sonnet-4| 73.7% | 
-| opus-4 | 74.2% |
-| Llama-3.3-70B-Instruct-Turbo (Together) | 79.8% |
-| o3-mini | 82.6% |
+### Reverse-QA-Hallu (v0.3)
 
-### MPR-Gen (v0.2)
-
-Higher is better (0 to 10)
-
-| Model Name | Score |
-| --- | --- |
-| sonnet-4| 7.16 +/- 2.70  |  
-| o3-mini | 6.98 +/- 2.28  |
-| opus-4 | 6.90 +/- 2.49 |
-| Llama-3.3-70B-Instruct-Turbo (Together) | 6.625 +/- 2.76 |
+| Model Name                   | mastodon | indigo | cloudflared | duckdb | tailscale | chroma | unweighted average |
+|------------------------------|----------|--------|-------------|--------|-----------|--------|--------------------|
+| together/llama-3.3-70b-turbo |    0.941 |  0.983 |       0.959 |  0.967 |     0.984 |  0.954 |              0.965 |
+| openai/o4-mini               |    0.946 |  0.949 |       0.966 |  0.944 |     0.957 |  0.913 |              0.946 |
