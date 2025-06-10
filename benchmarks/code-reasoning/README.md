@@ -1,4 +1,4 @@
-# Environment-Free Coding Benchmark ⚗️
+<h1 align="center">Environment-Free Coding Benchmark ⚗️</h1>
 
 This coding benchmark aims to offer robust and challenging tasks to evaluate
 language models on, without requiring the need to use a coding environment to
