@@ -6,6 +6,8 @@ This file provides guidance to Claude Code when working with this repository.
 
 SRE-skills-bench is a benchmark suite for evaluating LLMs on Site Reliability Engineering tasks. It helps reliability practitioners choose the right model for IDE assistants, operational workflows, and incident response.
 
+It is organized as three self-contained sub-benchmarks along a **comprehend → write → act** capability ladder. There is no blended cross-track score; each track reports its own result.
+
 ## Tech Stack
 
 - **Language**: Python 3.12
@@ -16,15 +18,18 @@ SRE-skills-bench is a benchmark suite for evaluating LLMs on Site Reliability En
 
 ```
 .
-├── src/                  # Source code
-│   └── plot_benchmark.py # Visualization for benchmark results
-├── scripts/              # Automation scripts
-│   ├── .env.example      # Environment variables template
-│   └── run-all-sre-skills-bench-tasks.sh  # Main evaluation runner
-├── static/               # Images and assets
-├── mise.toml             # Tool version configuration
-└── pyproject.toml        # Python project configuration
+├── benchmarks/
+│   ├── general-knowledge/   # COMPREHEND: GMCQ — match a bug-fix issue to the PR that closed it (runs via `openbench eval rootly_gmcq`)
+│   ├── terraform/           # WRITE: generate executable Terraform, graded against LocalStack (self-contained: own pyproject + run.sh)
+│   └── incident-response/   # ACT: replay postmortems as live scenarios (planned; placeholder)
+├── plot_benchmark.py        # Leaderboard visualization (reads static/data.csv)
+├── static/                  # Logos and assets used by the README
+├── mise.toml                # Tool version configuration
+└── pyproject.toml           # Root: deps for plot_benchmark.py only
 ```
+
+Each benchmark under `benchmarks/` is independently installable and run from its
+own directory. When working on a track, treat its directory as the project root.
 
 ## Development Setup
 
@@ -32,27 +37,24 @@ SRE-skills-bench is a benchmark suite for evaluating LLMs on Site Reliability En
 # Install tools via mise
 mise trust
 mise install
-
-# Create virtual environment and install dependencies
-uv venv
-source .venv/bin/activate
-uv pip install openbench
 ```
 
-## Running Evaluations
+Then follow the per-benchmark README for setup. For example, the Terraform track:
 
 ```bash
-# Set up environment
-cp scripts/.env.example scripts/.env
-# Edit scripts/.env with API keys
-
-# Run all evaluations
-cd scripts
-./run-all-sre-skills-bench-tasks.sh
+cd benchmarks/terraform
+uv venv && source .venv/bin/activate
+uv pip install -e .
+docker compose up -d        # LocalStack
+./run.sh
 ```
 
-## Dependencies
+## Root-level tooling
 
-- `openbench` - Benchmark evaluation framework
-- `matplotlib` - Plotting results
-- `adjusttext` - Text positioning in plots
+`plot_benchmark.py` renders the leaderboard graph from `static/data.csv`:
+
+```bash
+uv venv && source .venv/bin/activate
+uv pip install -e .         # installs matplotlib + adjusttext
+python plot_benchmark.py
+```

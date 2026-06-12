@@ -1,2 +1,0 @@
-plot_benchmark
-terraform_generation_bench

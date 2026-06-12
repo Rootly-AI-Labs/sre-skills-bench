@@ -1,6 +1,6 @@
 # Environment files
 .env
-scripts/.env
+**/.env
 
 # macOS
 .DS_Store
@@ -18,14 +18,14 @@ scripts/.env
 .venv/
 __pycache__/
 *.pyc
+*.egg-info/
 .pytest_cache/
 
 # Logs
 *.log
-script/logs/
-scripts/results*
+**/logs/
 
-# Terraform Generation Benchmark
+# Terraform Generation Benchmark (benchmarks/terraform)
 generated/
 results/
 debug/
@@ -36,5 +36,5 @@ localstack-data/
 .terraform.lock.hcl
 plan.bin
 *.tfvars.backup
-reports/*.md
-reports/*.html
+**/reports/*.md
+**/reports/*.html

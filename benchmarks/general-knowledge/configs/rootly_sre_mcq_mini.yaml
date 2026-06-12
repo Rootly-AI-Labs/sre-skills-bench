@@ -1,0 +1,8 @@
+rootly_sre_mcq_mini:
+  id: rootly_sre_mcq_mini.v0
+  metrics: [accuracy]
+
+rootly_sre_mcq_mini.v0:
+  class: evals.elsuite.basic.match:Match
+  args:
+    samples_jsonl: rootly_sre_mcq_mini/target_sre_mcq.jsonl

@@ -1,17 +1,18 @@
-# Terraform Generation Benchmark
+# SRE-skills-bench: Terraform
 
-## Overview
+The **write** track of SRE-skills-bench. Evaluates LLMs on their ability to
+generate **executable Terraform code** from natural-language prompts, testing
+end-to-end code generation and execution against LocalStack.
 
-The Terraform Generation Benchmark evaluates LLMs on their ability to generate **executable Terraform code** from natural language prompts. This benchmark tests end-to-end code generation and execution, complementing the existing multiple-choice Terraform SRE Benchmark.
+## Install & run
 
-## Key Differences from Terraform SRE Benchmark
-
-| Aspect | Terraform SRE Benchmark | Terraform Generation Benchmark |
-|--------|------------------------|-------------------------------|
-| **Format** | Multiple choice (4 code diffs) | Code generation from prompts |
-| **Testing** | Selection accuracy | Full Terraform execution |
-| **Validation** | Correct choice selection | Real resource creation in LocalStack |
-| **Scope** | Understanding code | Generating working code |
+```bash
+cd benchmarks/terraform
+uv venv && source .venv/bin/activate
+uv pip install -e .
+docker compose up -d            # LocalStack
+./run.sh                        # or use the CLI directly (see below)
+```
 
 ## Architecture
 

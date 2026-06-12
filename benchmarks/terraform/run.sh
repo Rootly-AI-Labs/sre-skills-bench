@@ -5,7 +5,7 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+PROJECT_ROOT="$SCRIPT_DIR"
 
 cd "$PROJECT_ROOT"
 
@@ -20,7 +20,7 @@ source .venv/bin/activate
 
 # Install dependencies
 echo "Installing dependencies..."
-uv pip install -e ".[terraform-generation]" || uv pip install -r requirements.txt
+uv pip install -e .
 
 # Set default models.json if not exists
 if [ ! -f "models.json" ]; then
