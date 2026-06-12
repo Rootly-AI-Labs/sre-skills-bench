@@ -6,40 +6,30 @@
 </h2>
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
 
 > *Can Language Models Resolve SRE Tasks?*
 
-SRE-skills-bench evaluates LLMs on tasks commonly performed by Site Reliability Engineers, helping reliability practitioners choose the right model for the job, whether it's powering IDE assistants, automating operational workflows, or improving incident response. Think of SRE-skills-bench as the SWE-bench of Site Reliability Engineering. 
-
-Read our latest findings with Gemini 3 Pro on our [blog post](https://rootly.com/blog/gemini-3-lead-in-sre-tasks).
-
-![image of graph showing accuracy vs price](static/SRE-skills-bench-results.jpg)
+SRE-skills-bench evaluates LLMs on tasks commonly performed by Site Reliability Engineers, helping reliability practitioners choose the right model for the job, whether it's powering IDE assistants, automating operational workflows, or improving incident response. Think of SRE-skills-bench as the SWE-bench of Site Reliability Engineering.
 
 At the Rootly AI Labs, we run SRE-skills-bench on frontier models the day they are released, and we share our findings on our social media platforms ([LinkedIn](https://linkedin.com/company/rootlyhq/), [X](https://x.com/rootlyhq)). We also present our benchmarks at leading ML research conferences, including as workshop papers at NeurIPS, ICML, and ACL.
 
-## Findings
+## Benchmarks
 
-The table below represents the average accuracy of each model across all SRE-related tasks included in the benchmark.
+SRE-skills-bench is organized as three sub-benchmarks along a **comprehend → write → act** capability ladder. Each is self-contained under `benchmarks/<name>/` with its own README, dependencies, and runner, and reports its own score (there is no single blended number).
 
-| Org | Model | SRE-skills-bench score | Ouput Token Cost (per M) | Run Date |
-|-----|-------|------------------------|---------------------------|------|
-| <img src="static/Google-Gemini.png" alt="Google" style="height:2em"> | gemini-3.1-pro 🏆 | 98.8% | $12.00 | Feb. 19, 2026 |
-| <img src="static/OpenAI.png" alt="OpenAI" style="height:2em">  | gpt-5.5 (high) | 98.3% | $30.00 | April 26, 2026 |
-| <img src="static/OpenAI.png" alt="OpenAI" style="height:2em"> | gpt-5.4 | 98.3% | $15.00 | Mar 5, 2026 |
-| <img src="static/Anthropic.jpg" alt="Anthropic" style="height:2em"> | opus-4.7 (high) | 98.2% | $25.00 | Apr. 16, 2026 |
-| <img src="static/OpenAI.png" alt="OpenAI" style="height:2em"> | gpt-5.3-codex | 98.03% | $14.00 | Mar. 13, 2026 |
-| <img src="static/Google-Gemini.png" alt="Google" style="height:2em"> | gemini-3-pro | 96.7% | $12.00 | Feb. 17, 2026 |
-| <img src="static/OpenAI.png" alt="OpenAI" style="height:2em"> | gpt-5.2-pro | 96.5% | $168.00 💸 | Feb. 17, 2026 |
-| <img src="static/moonshotai.jpg" alt="Moonshot AI" style="height:2em"> | kimi-k2.5  | 95.9% | $2.20 | Feb. 17, 2026 |
-| <img src="static/Anthropic.jpg" alt="Anthropic" style="height:2em"> | opus-4.6 | 94.7% | $25.00 | Feb. 17, 2026 |
-| <img src="static/Anthropic.jpg" alt="Anthropic" style="height:2em"> | opus-4.5 | 94.6% | $25.00 | Feb. 17, 2026 |
-| <img src="static/OpenAI.png" alt="OpenAI" style="height:2em"> | gpt-5.1 | 93.3% | $14.00 | Feb. 17, 2026 |
-| <img src="static/OpenAI.png" alt="OpenAI" style="height:2em"> | gpt-5.1-codex-max | 92.5% | $10.00 | Dec. 10, 2025 |
-| <img src="static/Anthropic.jpg" alt="Anthropic" style="height:2em"> | sonnet-4.6 | 90.4% | $15.00  | Feb. 17, 2026 |
-| <img src="static/OpenAI.png" alt="OpenAI" style="height:2em"> | gpt-5.1 | 89.6% | $10.00 | Nov. 24, 2025 |
+| Track | Capability | What it tests | Status |
+|-------|------------|---------------|--------|
+| [**General Knowledge**](benchmarks/general-knowledge/) | Comprehend | Given a bug-fix issue and four candidate PRs from the same repo, identify the PR that closed it (GMCQ) | Available — runs via `openbench eval rootly_gmcq` |
+| [**Terraform**](benchmarks/terraform/) | Write | Generate **executable** Terraform from a natural-language prompt; graded by running the full `fmt → init → validate → plan → apply → destroy` lifecycle against LocalStack | Available |
+| [**Incident Response**](benchmarks/incident-response/) | Act | Replay real postmortems as live scenarios; grade an agent across detect → localize → diagnose → mitigate → verify | Planned |
 
-**👉 Visit our website [sreskillsbench.com](https://sreskillsbench.com/) to have access to all the findings.**
+```
+benchmarks/
+├── general-knowledge/   # comprehend  (GMCQ — runs via openbench)
+├── terraform/           # write       (executable Terraform generation)
+└── incident-response/   # act         (postmortem replay — planned)
+```
 
 ## 📰 News
 * **[Dec. 2, 2025]**: [presenting our work](https://x.com/LaurenceLiang1/status/1993446585062375710?s=20) at ER – NeurIPS in San Diego, USA.
@@ -49,111 +39,19 @@ The table below represents the average accuracy of each model across all SRE-rel
 
 ## Getting Started
 
-To reproduce our results or use our benchmark to benchmark other models.
-
-### Prerequisites
-
-This project uses [mise](https://mise.jdx.dev/) for tool version management.
+This project uses [mise](https://mise.jdx.dev/) for tool version management and [uv](https://docs.astral.sh/uv/) for Python packaging.
 
 ```bash
 # Install mise (if not already installed)
 curl https://mise.run | sh
-
-# Install required tools
-mise trust
-mise install
+mise trust && mise install
 ```
 
-### Running the Benchmark
+Each benchmark is run from its own directory — see the per-track README for setup and commands:
 
-```bash
-# Create a virtual environment and install OpenBench
-uv venv
-source .venv/bin/activate
-uv pip install openbench
-
-# Set your API key (any provider!)
-export GROQ_API_KEY=your_key  # or OPENAI_API_KEY, ANTHROPIC_API_KEY, etc.
-
-# Run Rootly's benchmark
-bench eval gmcq --model "groq/llama-3.1-8b-instant" --T subtask=mastodon
-```
-
-### Running the Automation Script
-
-To run evaluations across all SRE tasks using the automation script:
-
-```bash
-# Copy the example env file and add your API keys
-cp scripts/.env.example scripts/.env
-# Edit scripts/.env with your API keys
-
-# Run the evaluation script
-cd scripts
-./run-all-sre-skills-bench-tasks.sh
-```
-
-Results will be saved to a timestamped CSV file.
-
-## Methodology
-
-SRE-skills-bench evaluates models on tasks that represent real, day-to-day SRE responsibilities.  
-Each task category includes multiple test cases with expected outputs, graded programmatically or via structured evaluation. For each test, we open-source 40% of the entire dataset, available on our [HF repo 🤗](https://huggingface.co/rootly-ai-labs).
-
-### GitHub Multiple Choice Questions Benchmark (GMCQ)
-
-GMCQ evaluates a model's ability to understand code changes during pull requests, which can assist SREs during rapid responses to critical incidents. GMCQ's dataset consists of real-world pull requests and code diffs from six popular GitHub repositories that actively publish new version releases. Each question consists of a real pull request's issue description, and four choices of real code diffs, all sourced from the same repository. Only one code diff corresponds to that specific pull request, and the model must be able to identify the correct code diff. To achieve a strong performance on this benchmark, the model must be capable of understanding code functionality when given textual instructions and limited context. 
-
-This GMCQ benchmark was presented by the Rootly AI Labs as a workshop paper at ICML 2025 and ACL 2025.
-
-
-### Terraform SRE Benchmark 
-
-This benchmark evaluates a model's ability to understand common code requests for SREs. Each question in this benchmark provides the model with a specific request and presents 4 code diffs of Terraform code and instructions that resolve similar requests. The model must select the correct choice of code diff.
-
-This benchmark contains a wide array of scenarios, including compute, network, Kubernetes, and security requests on AWS, GCP, and Azure. For a model to perform well on this benchmark, it must be able to demonstrate a generalizable understanding of SRE requests across a wide array of tasks and target platforms, making this benchmark relevant to determine relevant models that can assist SREs in their day-to-day work.
-
-### Terraform Generation Benchmark
-
-This benchmark evaluates a model's ability to **generate executable Terraform code** from natural language prompts. Unlike the multiple-choice Terraform SRE Benchmark, this tests end-to-end code generation and execution.
-
-**Key Features:**
-- **11 real-world Terraform tasks** covering VPC, EC2, S3, IAM, and Security Groups
-- **Full Terraform lifecycle testing** (fmt, init, validate, plan, apply, destroy)
-- **LocalStack integration** for safe, reproducible testing without real AWS resources
-- **Comprehensive reporting** with failure categorization (SYNTAX, INIT, VALIDATE, PLAN, APPLY, etc.)
-- **Multi-provider LLM support** (OpenAI, Anthropic, OpenRouter)
-
-**Usage:**
-```bash
-# Install dependencies
-uv pip install -e ".[terraform-generation]"
-
-# Start LocalStack (required)
-docker compose up -d
-
-# Set API keys
-export OPENAI_API_KEY=your_key
-export ANTHROPIC_API_KEY=your_key
-export OPENROUTER_API_KEY=your_key  # Optional
-
-# Run benchmark
-./scripts/run-terraform-generation-bench.sh
-
-# Or use the CLI directly
-python -m terraform_generation_bench.benchmark_cli suite \
-  --models models.json \
-  --tasks all \           # note: you may need to remove this line of code during runtime
-  --runs-per-model 1
-```
-
-**Findings:**
-- Most models (99%) successfully generate code, but fail during Terraform execution
-- Common failure points: INIT (33%), SYNTAX (21%), VALIDATE (13%)
-- Top performers: DeepSeek Chat (27%), Mistral Large (18%), Llama 3 70B (18%)
-- Only 25% of models pass at least one task across all 11 scenarios
-
-This benchmark complements the existing Terraform SRE Benchmark by testing **code generation** rather than **code understanding**, providing a more comprehensive evaluation of LLM capabilities for SRE tasks.
+- **Terraform** → [`benchmarks/terraform/README.md`](benchmarks/terraform/README.md)
+- **General Knowledge** → [`benchmarks/general-knowledge/README.md`](benchmarks/general-knowledge/README.md)
+- **Incident Response** → [`benchmarks/incident-response/README.md`](benchmarks/incident-response/README.md)
 
 ## 🔗 About the Rootly AI Labs
 SRE-skills-bench is built with ❤️ by the [Rootly AI Labs](https://rootly.com/ai-labs) for engineering teams everywhere. The Rootly AI Labs is a fellow-led community designed to redefine reliability engineering. We develop innovative prototypes, create open-source tools, and produce research that's shared to advance the standards of operational excellence. We want to thank Anthropic, Google Cloud, and Google DeepMind for their support.

@@ -1,0 +1,22 @@
+[project]
+name = "terraform-generation-bench"
+version = "0.1.0"
+description = "SRE-skills-bench: Terraform — evaluate LLMs on generating executable Terraform from natural-language prompts"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pyyaml>=6.0",
+    "boto3>=1.28.0",
+    "requests>=2.31.0",
+    "openai>=1.0.0",
+    "anthropic>=0.18.0",
+    "rich>=13.0.0",
+    "python-dotenv>=1.0.0",
+]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
