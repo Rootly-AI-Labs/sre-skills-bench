@@ -22,13 +22,13 @@ SRE-skills-bench is organized as three sub-benchmarks along a **comprehend → w
 |-------|------------|---------------|--------|
 | [**General Knowledge**](benchmarks/general-knowledge/) | Comprehend | Given a bug-fix issue and four candidate PRs from the same repo, identify the PR that closed it (GMCQ) | Available — runs via `openbench eval rootly_gmcq` |
 | [**Terraform**](benchmarks/terraform/) | Write | Generate **executable** Terraform from a natural-language prompt; graded by running the full `fmt → init → validate → plan → apply → destroy` lifecycle against LocalStack | Available |
-| [**Incident Response**](benchmarks/incident-response/) | Act | Replay real postmortems as live scenarios; grade an agent across detect → localize → diagnose → mitigate → verify | Planned |
+| [**Incident Response**](benchmarks/incident-response/) | Act | Run live incident scenarios; grade an agent across detect → localize → diagnose → mitigate → verify | Planned |
 
 ```
 benchmarks/
 ├── general-knowledge/   # comprehend  (GMCQ — runs via openbench)
 ├── terraform/           # write       (executable Terraform generation)
-└── incident-response/   # act         (postmortem replay — planned)
+└── incident-response/   # act         (live incident scenarios — planned)
 ```
 
 ## 📰 News

@@ -21,15 +21,15 @@ It is organized as three self-contained sub-benchmarks along a **comprehend → 
 ├── benchmarks/
 │   ├── general-knowledge/   # COMPREHEND: GMCQ — match a bug-fix issue to the PR that closed it (runs via `openbench eval rootly_gmcq`)
 │   ├── terraform/           # WRITE: generate executable Terraform, graded against LocalStack (self-contained: own pyproject + run.sh)
-│   └── incident-response/   # ACT: replay postmortems as live scenarios (planned; placeholder)
-├── plot_benchmark.py        # Leaderboard visualization (reads static/data.csv)
-├── static/                  # Logos and assets used by the README
-├── mise.toml                # Tool version configuration
-└── pyproject.toml           # Root: deps for plot_benchmark.py only
+│   └── incident-response/   # ACT: live incident scenarios graded across the incident lifecycle (planned; placeholder)
+├── static/                  # Assets used by the README
+└── mise.toml                # Tool version configuration
 ```
 
 Each benchmark under `benchmarks/` is independently installable and run from its
 own directory. When working on a track, treat its directory as the project root.
+The repository root holds only documentation and tool configuration — there is no
+root-level Python package.
 
 ## Development Setup
 
@@ -47,14 +47,4 @@ uv venv && source .venv/bin/activate
 uv pip install -e .
 docker compose up -d        # LocalStack
 ./run.sh
-```
-
-## Root-level tooling
-
-`plot_benchmark.py` renders the leaderboard graph from `static/data.csv`:
-
-```bash
-uv venv && source .venv/bin/activate
-uv pip install -e .         # installs matplotlib + adjusttext
-python plot_benchmark.py
 ```
