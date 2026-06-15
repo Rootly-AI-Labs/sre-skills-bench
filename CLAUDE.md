@@ -6,7 +6,7 @@ This file provides guidance to Claude Code when working with this repository.
 
 SRE-skills-bench is a benchmark suite for evaluating LLMs on Site Reliability Engineering tasks. It helps reliability practitioners choose the right model for IDE assistants, operational workflows, and incident response.
 
-It is organized as three self-contained sub-benchmarks along a **comprehend → write → act** capability ladder. There is no blended cross-track score; each track reports its own result.
+It is organized as self-contained sub-benchmarks along a **comprehend → write → act** capability ladder. There is no blended cross-track score; each track reports its own result.
 
 ## Tech Stack
 
@@ -20,6 +20,7 @@ It is organized as three self-contained sub-benchmarks along a **comprehend → 
 .
 ├── benchmarks/
 │   ├── general-knowledge/   # COMPREHEND: GMCQ — match a bug-fix issue to the PR that closed it (runs via `openbench eval rootly_gmcq`)
+│   ├── code-reasoning/      # COMPREHEND→WRITE: reason about real PR diffs across 5 tasks, environment-free (data + judge prompts; no runner yet)
 │   ├── terraform/           # WRITE: generate executable Terraform, graded against LocalStack (self-contained: own pyproject + run.sh)
 │   └── incident-response/   # ACT: replay postmortems as live scenarios (planned; placeholder)
 ├── plot_benchmark.py        # Leaderboard visualization (reads static/data.csv)

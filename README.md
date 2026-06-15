@@ -16,17 +16,19 @@ At the Rootly AI Labs, we run SRE-skills-bench on frontier models the day they a
 
 ## Benchmarks
 
-SRE-skills-bench is organized as three sub-benchmarks along a **comprehend → write → act** capability ladder. Each is self-contained under `benchmarks/<name>/` with its own README, dependencies, and runner, and reports its own score (there is no single blended number).
+SRE-skills-bench is organized as sub-benchmarks along a **comprehend → write → act** capability ladder. Each is self-contained under `benchmarks/<name>/` with its own README, dependencies, and runner, and reports its own score (there is no single blended number).
 
 | Track | Capability | What it tests | Status |
 |-------|------------|---------------|--------|
 | [**General Knowledge**](benchmarks/general-knowledge/) | Comprehend | Given a bug-fix issue and four candidate PRs from the same repo, identify the PR that closed it (GMCQ) | Available — runs via `openbench eval rootly_gmcq` |
+| [**Code Reasoning**](benchmarks/code-reasoning/) | Comprehend → Write | Reason about real PR diffs across five tasks (match the closing diff, reconstruct the issue, complete a masked change, detect hallucination) — all environment-free | Available — data + judge prompts |
 | [**Terraform**](benchmarks/terraform/) | Write | Generate **executable** Terraform from a natural-language prompt; graded by running the full `fmt → init → validate → plan → apply → destroy` lifecycle against LocalStack | Available |
 | [**Incident Response**](benchmarks/incident-response/) | Act | Replay real postmortems as live scenarios; grade an agent across detect → localize → diagnose → mitigate → verify | Planned |
 
 ```
 benchmarks/
 ├── general-knowledge/   # comprehend  (GMCQ — runs via openbench)
+├── code-reasoning/      # comprehend→write  (PR-diff reasoning, environment-free)
 ├── terraform/           # write       (executable Terraform generation)
 └── incident-response/   # act         (postmortem replay — planned)
 ```
@@ -51,6 +53,7 @@ Each benchmark is run from its own directory — see the per-track README for se
 
 - **Terraform** → [`benchmarks/terraform/README.md`](benchmarks/terraform/README.md)
 - **General Knowledge** → [`benchmarks/general-knowledge/README.md`](benchmarks/general-knowledge/README.md)
+- **Code Reasoning** → [`benchmarks/code-reasoning/README.md`](benchmarks/code-reasoning/README.md)
 - **Incident Response** → [`benchmarks/incident-response/README.md`](benchmarks/incident-response/README.md)
 
 ## 🔗 About the Rootly AI Labs
