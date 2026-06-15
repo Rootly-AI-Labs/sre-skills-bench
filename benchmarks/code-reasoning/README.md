@@ -62,8 +62,8 @@ Reverse-QA; Reverse-QA-Hallu is computed from the Reverse-QA file):
 
 | Model | GMCQ-Easy | GMCQ-Hard | MPR-Gen | Reverse-QA | Reverse-QA-Hallu |
 |---|---|---|---|---|---|
-| openai/o4-mini | 0.892 | 0.868 | 3.67 | 7.41 | 0.946 |
-| together/llama-3.3-70b-turbo | 0.803 | 0.476 | 3.74 | 7.23 | 0.965 |
+| openai/o4-mini | 0.892 | 0.868 | 7.41 | 3.67 | 0.946 |
+| together/llama-3.3-70b-turbo | 0.803 | 0.476 | 7.23 | 3.74 | 0.965 |
 | anthropic/claude-4-sonnet | 0.851 | — | — | — | — |
 
 GMCQ scores are accuracy (0–1, higher is better). MPR-Gen and Reverse-QA are mean
