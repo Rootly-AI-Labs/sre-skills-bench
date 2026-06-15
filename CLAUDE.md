@@ -6,7 +6,7 @@ This file provides guidance to Claude Code when working with this repository.
 
 SRE-skills-bench is a benchmark suite for evaluating LLMs on Site Reliability Engineering tasks. It helps reliability practitioners choose the right model for IDE assistants, operational workflows, and incident response.
 
-It is organized as three self-contained sub-benchmarks along a **comprehend → write → act** capability ladder. There is no blended cross-track score; each track reports its own result.
+It is organized as self-contained sub-benchmarks along a **comprehend → write → act** capability ladder. There is no blended cross-track score; each track reports its own result.
 
 ## Tech Stack
 
