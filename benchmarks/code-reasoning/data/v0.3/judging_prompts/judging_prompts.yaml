@@ -15,7 +15,7 @@ Otherwise, output 0.
 
 Only return the score as a number. Do not return anything else.'
 
-"revesre_qa": "You are an impartial judge.
+"reverse_qa": "You are an impartial judge.
     Please evaluate the following ground truth and predicted responses, and output a score between 0 and 10,
     based on the similarity between the ground truth and predicted response.
 
