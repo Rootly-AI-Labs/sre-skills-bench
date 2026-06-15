@@ -1,4 +1,4 @@
-# Code Reasoning Changelog
+# Code Comprehension Changelog
 
 This track originated as the standalone *Environment-Free Coding Benchmark (EFCB)*;
 the versions below predate its move into SRE-skills-bench.

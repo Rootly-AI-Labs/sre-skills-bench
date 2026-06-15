@@ -1,14 +1,14 @@
-# SRE-skills-bench: Code Reasoning
+# SRE-skills-bench: Code Comprehension
 
-The **code-change reasoning** track of SRE-skills-bench.
+The **comprehend** track of SRE-skills-bench.
 
-Code Reasoning evaluates how well a model reasons about real-world code changes —
-reading a pull request diff and inferring its intent, reconstructing the issue it
-resolves, completing a masked change, and avoiding hallucination. These are the
-day-to-day comprehension skills engineers rely on when reviewing changes and
-triaging incidents, measured **without any execution environment**: every task is
-static data, so the benchmark runs anywhere with no repo checkout, build, or
-sandbox required.
+Code Comprehension evaluates how well a model understands real-world code changes —
+reading a pull request diff and inferring its intent, identifying which change
+closes an issue, reconstructing the issue it resolves, completing a masked change,
+and avoiding hallucination. These are the day-to-day comprehension skills engineers
+rely on when reviewing changes and triaging incidents, measured **without any
+execution environment**: every task is static data, so the benchmark runs anywhere
+with no repo checkout, build, or sandbox required.
 
 It originated as the standalone *Environment-Free Coding Benchmark (EFCB)*.
 
@@ -38,12 +38,12 @@ prompts live in [`data/v0.3/judging_prompts/judging_prompts.yaml`](data/v0.3/jud
 ## Dataset
 
 Every record uses the OpenAI-evals / [openbench](https://github.com/groq/openbench)
-schema — `{"input": [<chat messages>], "ideal": "<answer>"}` — so it is
-interchangeable with the [General Knowledge](../general-knowledge/) track, which
-ships the GMCQ subset as a first-class `openbench` benchmark.
+schema — `{"input": [<chat messages>], "ideal": "<answer>"}` — so the GMCQ subset
+runs as a first-class `openbench` benchmark out of the box (see [Running](#running)).
 
 **v0.3** — six repositories, four task files each (GMCQ-Easy, GMCQ-Hard, MPR-Gen,
-Reverse-QA; Reverse-QA-Hallu is computed from the Reverse-QA file):
+Reverse-QA; Reverse-QA-Hallu is computed from the Reverse-QA file). PR-only framing:
+given a closed pull request, scrape only that PR's code patches.
 
 | Repository | GMCQ-Easy / Hard / Reverse-QA | MPR-Gen |
 | --- | --- | --- |
@@ -57,6 +57,33 @@ Reverse-QA; Reverse-QA-Hallu is computed from the Reverse-QA file):
 - `data/v0.3/tasks/<repo>/` — per-repository task files.
 - `data/v0.3/judging_prompts/` — judge prompts for the LLM-as-a-judge tasks.
 - `data/v0.2/` — earlier mastodon-only snapshot, kept for provenance.
+- `data/v0.1/target_sre_mcq.jsonl` — the original 82-question GMCQ on
+  mastodon/mastodon, using the **issue → which of four PRs closed it** framing
+  (v0.3 later switched to PR-only). Published on Hugging Face as
+  [`TheFloatingString/gmcq`](https://huggingface.co/datasets/TheFloatingString/gmcq)
+  and runnable via `openbench` (`rootly_gmcq`); the local file is a snapshot.
+- `configs/rootly_sre_mcq_mini.yaml` — OpenAI-evals registry entry for the v0.1 set.
+
+## Running
+
+The GMCQ subset ships as a first-class benchmark in
+[openbench](https://github.com/groq/openbench) (`rootly_gmcq`), which pulls the
+dataset from Hugging Face — so it runs out of the box:
+
+```bash
+uv pip install openbench
+export GROQ_API_KEY=...        # or OPENAI_API_KEY, ANTHROPIC_API_KEY, etc.
+
+# Whole dataset
+bench eval rootly_gmcq --model "groq/llama-3.1-8b-instant"
+
+# A single repository subtask (e.g. mastodon, bluesky, chroma, cloudflare, duckdb, tailscale)
+bench eval rootly_gmcq --model "groq/llama-3.1-8b-instant" -T subtask=mastodon
+```
+
+The local snapshots in `data/` use the same record schema openbench expects, so
+they stay interchangeable with the Hugging Face source. A runner for the
+LLM-as-a-judge tasks (Reverse-QA, MPR-Gen, Reverse-QA-Hallu) is on the roadmap.
 
 ## Results (v0.3)
 
@@ -131,6 +158,32 @@ opus-4 74.2% · Llama-3.3-70B-Turbo 79.8% · o3-mini 82.6%
 
 </details>
 
+<details>
+<summary>GMCQ v0.1 (issue → PR, mastodon only — measured via OpenAI evals)</summary>
+
+| Model | Accuracy |
+| --- | --- |
+| o4-mini | 0.927 ± 0.029 |
+| o3 | 0.915 ± 0.032 |
+| grok-3-beta | 0.915 ± 0.032 |
+| Qwen-2.5-Coder-32B (Groq) | 0.902 ± 0.034 |
+| grok-3-mini-beta | 0.902 ± 0.032 |
+| o3-mini | 0.893 ± 0.034 |
+| Gemini-2.5-Flash | 0.878 ± 0.036 |
+| GPT-4o | 0.866 ± 0.039 |
+| GPT-4.1 | 0.841 ± 0.039 |
+| Gemini-2.0-Flash | 0.841 ± 0.042 |
+| GPT-4o mini | 0.829 ± 0.042 |
+| Qwen-2.5-32B (Groq) | 0.793 ± 0.044 |
+| Claude 3.5 Sonnet | 0.780 ± 0.048 |
+| DeepSeek V3.1 (Together AI) | 0.756 ± 0.049 |
+| Llama-3.3 70B (Groq) | 0.720 ± 0.050 |
+| Llama-4-Maverick (Groq) | 0.695 ± 0.051 |
+| Llama-4 Scout (Groq) | 0.598 ± 0.053 |
+| Llama-3.1 8B-instant (Groq) | 0.341 ± 0.052 |
+
+</details>
+
 ## Roadmap
 
 - Expand repository coverage and refresh the leaderboard against current frontier
@@ -140,4 +193,5 @@ opus-4 74.2% · Llama-3.3-70B-Turbo 79.8% · o3-mini 82.6%
 
 ## Credits
 
-Built by the [Rootly AI Labs](https://labs.rootly.ai/).
+GMCQ was developed by Rootly AI Labs fellow Laurence Liang. Built by the
+[Rootly AI Labs](https://labs.rootly.ai/).
