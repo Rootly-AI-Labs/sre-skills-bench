@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: blacksmith-2vcpu-ubuntu-2404
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+      - run: uvx ruff@0.17.2 check .
+      - run: uvx ruff@0.17.2 format --check .
+
+  smoke:
+    runs-on: blacksmith-2vcpu-ubuntu-2404
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: .
+            import: plot_benchmark
+          - project: benchmarks/terraform
+            import: terraform_generation_bench.benchmark_cli
+    defaults:
+      run:
+        working-directory: ${{ matrix.project }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+      - run: uv lock --check
+      - run: uv sync --locked
+      - run: uv run python -c "import importlib; importlib.import_module('${{ matrix.import }}')"

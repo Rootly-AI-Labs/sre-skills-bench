@@ -10,7 +10,8 @@ It is organized as self-contained sub-benchmarks along a **comprehend → write 
 
 ## Tech Stack
 
-- **Language**: Python 3.12
+- **Language**: Python 3.13 (3.12+ supported)
+- **Lint/format**: ruff (`ruff.toml` at repo root)
 - **Package Manager**: uv
 - **Tool Version Manager**: mise
 
@@ -26,6 +27,7 @@ It is organized as self-contained sub-benchmarks along a **comprehend → write 
 ├── plot_benchmark.py        # Leaderboard visualization (reads static/data.csv)
 ├── static/                  # Logos and assets used by the README
 ├── mise.toml                # Tool version configuration
+├── ruff.toml                # Lint/format config for all Python in the repo
 └── pyproject.toml           # Root: deps for plot_benchmark.py only
 ```
 
@@ -44,8 +46,7 @@ Then follow the per-benchmark README for setup. For example, the Terraform track
 
 ```bash
 cd benchmarks/terraform
-uv venv && source .venv/bin/activate
-uv pip install -e .
+uv sync
 docker compose up -d        # LocalStack
 ./run.sh
 ```
@@ -55,7 +56,14 @@ docker compose up -d        # LocalStack
 `plot_benchmark.py` renders the leaderboard graph from `static/data.csv`:
 
 ```bash
-uv venv && source .venv/bin/activate
-uv pip install -e .         # installs matplotlib + adjusttext
-python plot_benchmark.py
+uv sync                     # installs matplotlib + adjusttext
+uv run python plot_benchmark.py
 ```
+
+## Lint & format
+
+```bash
+uvx ruff check . && uvx ruff format --check .
+```
+
+CI (`.github/workflows/ci.yml`) runs ruff, verifies each `uv.lock` is current, and smoke-imports each package.
