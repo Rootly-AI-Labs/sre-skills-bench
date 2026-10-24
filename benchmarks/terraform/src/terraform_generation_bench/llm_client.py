@@ -29,11 +29,11 @@ class LLMClient(ABC):
 class OpenAIClient(LLMClient):
     """OpenAI API client."""
 
-    def __init__(self, model: str = "gpt-4", api_key: str | None = None):
+    def __init__(self, model: str, api_key: str | None = None):
         """Initialize OpenAI client.
 
         Args:
-            model: Model name (e.g., "gpt-4", "gpt-3.5-turbo")
+            model: Model name (e.g., "gpt-5")
             api_key: OpenAI API key (defaults to OPENAI_API_KEY env var)
         """
         self.model = model
@@ -172,11 +172,11 @@ class AnthropicClient(LLMClient):
 class EdgeeClient(LLMClient):
     """Edgee API client - OpenAI-compatible with compression."""
 
-    def __init__(self, model: str = "claude-sonnet-4-5", api_key: str | None = None):
+    def __init__(self, model: str, api_key: str | None = None):
         """Initialize Edgee client.
 
         Args:
-            model: Model name (e.g., "claude-sonnet-4-5", "gpt-4o")
+            model: Model name (e.g., "claude-opus-5-5", "gpt-5")
             api_key: Edgee API key (defaults to EDGEE_API_KEY env var)
         """
         self.model = model
@@ -398,7 +398,9 @@ class LLMClientFactory:
         if provider == "openai":
             return bool(os.getenv("OPENAI_API_KEY"))
         elif provider == "anthropic":
-            return bool(os.getenv("ANTHROPIC_API_KEY"))
+            # Same resolution as the SDK / ant CLI: env vars, then `ant auth login` profile
+            client = anthropic.Anthropic()
+            return bool(client.api_key or client.auth_token or client.credentials)
         elif provider == "edgee":
             return bool(os.getenv("EDGEE_API_KEY"))
         return False

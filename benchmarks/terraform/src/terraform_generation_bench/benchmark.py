@@ -162,7 +162,7 @@ class BenchmarkRunner:
         """Run benchmark suite across multiple models and tasks.
 
         Args:
-            models: List of model configs [{"provider": "openai", "model": "gpt-4"}, ...]
+            models: List of model configs [{"provider": "anthropic", "model": "claude-opus-5-5"}, ...]
             task_ids: List of task IDs to test
             max_workers: Maximum number of parallel workers (default: min(CPU count, 20))
             display: Optional BenchmarkDisplay instance for TUI output.

@@ -13,19 +13,19 @@ def get_logo_path(model_name):
     model_lower = model_name.lower()
 
     if "gpt" in model_lower or "openai" in model_lower:
-        return "logos/openai.png"
+        return "static/OpenAI.png"
     elif "gemini" in model_lower or "google" in model_lower:
-        return "logos/google.png"
+        return "static/Google-Gemini.png"
     elif "sonnet" in model_lower or "claude" in model_lower or "anthropic" in model_lower:
-        return "logos/anthropic.png"
+        return "static/Anthropic.jpg"
     elif "glm" in model_lower:
-        return "logos/zai.png"
+        return "static/Zai.png"
     elif "qwen" in model_lower:
-        return "logos/qwen.png"
+        return "static/Qwen-AI.png"
     elif "bedrock" in model_lower or "aws" in model_lower or "amazon" in model_lower or "nova" in model_lower:
-        return "logos/aws.png"
+        return "static/AWS.png"
     elif "llama" in model_lower or "meta" in model_lower:
-        return "logos/meta.png"
+        return "static/meta.png"
     else:
         return None
 
