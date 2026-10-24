@@ -7,10 +7,13 @@
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
+[![CI](https://github.com/Rootly-AI-Labs/sre-skills-bench/actions/workflows/ci.yml/badge.svg)](https://github.com/Rootly-AI-Labs/sre-skills-bench/actions/workflows/ci.yml)
 
 > *Can Language Models Resolve SRE Tasks?*
 
 SRE-skills-bench evaluates LLMs on tasks commonly performed by Site Reliability Engineers, helping reliability practitioners choose the right model for the job, whether it's powering IDE assistants, automating operational workflows, or improving incident response. Think of SRE-skills-bench as the SWE-bench of Site Reliability Engineering.
+
+**Leaderboard:** [sreskillsbench.com](https://sreskillsbench.com) (source: [`sre-skills-bench-website`](https://github.com/Rootly-AI-Labs/sre-skills-bench-website))
 
 At the Rootly AI Labs, we run SRE-skills-bench on frontier models the day they are released, and we share our findings on our social media platforms ([LinkedIn](https://linkedin.com/company/rootlyhq/), [X](https://x.com/rootlyhq)). We also present our benchmarks at leading ML research conferences, including as workshop papers at NeurIPS, ICML, and ACL.
 
@@ -20,7 +23,7 @@ SRE-skills-bench is organized as sub-benchmarks along a **comprehend → write �
 
 | Track | Capability | What it tests | Status |
 |-------|------------|---------------|--------|
-| [**General Knowledge**](benchmarks/general-knowledge/) | Comprehend | Given a bug-fix issue and four candidate PRs from the same repo, identify the PR that closed it (GMCQ) | Available — runs via `openbench eval rootly_gmcq` |
+| [**General Knowledge**](benchmarks/general-knowledge/) | Comprehend | Given a bug-fix issue and four candidate PRs from the same repo, identify the PR that closed it (GMCQ) | Available — runs via openbench (`bench eval rootly_gmcq`) |
 | [**Code Reasoning**](benchmarks/code-reasoning/) | Comprehend → Write | Reason about real PR diffs across five tasks (match the closing diff, reconstruct the issue, complete a masked change, detect hallucination) — all environment-free | Available — data + judge prompts |
 | [**Terraform**](benchmarks/terraform/) | Write | Generate **executable** Terraform from a natural-language prompt; graded by running the full `fmt → init → validate → plan → apply → destroy` lifecycle against LocalStack | Available |
 | [**Incident Response**](benchmarks/incident-response/) | Act | Replay real postmortems as live scenarios; grade an agent across detect → localize → diagnose → mitigate → verify | Planned |
@@ -55,6 +58,38 @@ Each benchmark is run from its own directory — see the per-track README for se
 - **General Knowledge** → [`benchmarks/general-knowledge/README.md`](benchmarks/general-knowledge/README.md)
 - **Code Reasoning** → [`benchmarks/code-reasoning/README.md`](benchmarks/code-reasoning/README.md)
 - **Incident Response** → [`benchmarks/incident-response/README.md`](benchmarks/incident-response/README.md)
+
+## Running with the latest models
+
+**Terraform** — list what your account can access, add models to `benchmarks/terraform/models.json`, and run the suite against LocalStack:
+
+```bash
+cd benchmarks/terraform
+uv run python -m terraform_generation_bench.benchmark_cli list-models --provider anthropic   # or openrouter
+docker compose up -d && ./run.sh
+```
+
+```json
+[
+  {"provider": "anthropic", "model": "claude-opus-5-5", "effort": "high"},
+  {"provider": "openrouter", "model": "<vendor>/<model>"}
+]
+```
+
+`effort` is optional (Anthropic only). Set it explicitly when comparing models, since defaults differ per model.
+
+**GMCQ** — `uvx --from openbench --with 'mcp<2' bench eval rootly_gmcq --model anthropic/claude-opus-5-5`
+
+**Publishing** — results are not wired to the site automatically. Update `static/data.csv` here (then `uv run python plot_benchmark.py`) and the leaderboard data in the [website repo](https://github.com/Rootly-AI-Labs/sre-skills-bench-website#updating-results).
+
+## Development
+
+```bash
+uvx ruff check . && uvx ruff format --check .   # lint + format (ruff.toml)
+cd benchmarks/terraform && uv sync && uv lock --check
+```
+
+CI runs the same checks on every PR; Dependabot keeps `uv.lock` files and GitHub Actions up to date.
 
 ## 🔗 About the Rootly AI Labs
 SRE-skills-bench is built with ❤️ by the [Rootly AI Labs](https://rootly.com/ai-labs) for engineering teams everywhere. The Rootly AI Labs is a fellow-led community designed to redefine reliability engineering. We develop innovative prototypes, create open-source tools, and produce research that's shared to advance the standards of operational excellence. We want to thank Anthropic, Google Cloud, and Google DeepMind for their support.
