@@ -1,0 +1,12 @@
+target-version = "py312"
+line-length = 120
+
+[lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "PTH"]
+ignore = [
+    "E501",   # formatter owns line length; long f-strings are OK
+    "PTH123", # builtin open() is fine
+]
+
+[lint.isort]
+known-first-party = ["terraform_generation_bench"]
