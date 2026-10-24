@@ -38,3 +38,6 @@ plan.bin
 *.tfvars.backup
 **/reports/*.md
 **/reports/*.html
+
+# plot_benchmark.py output
+benchmark_scatter_plots.png

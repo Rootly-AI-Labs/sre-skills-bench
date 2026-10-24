@@ -1,28 +1,27 @@
 """Benchmarking tool for testing LLM-generated Terraform code."""
 
 import json
-import time
 import sys
-from pathlib import Path
-from typing import Dict, Any, List, Optional
+import time
 from datetime import datetime
+from pathlib import Path
+from typing import Any
 
 # Add current directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent))
 
-from terraform_generation_bench.runner import TaskRunner, log_info, log_error
+from terraform_generation_bench.llm_client import LLMClientFactory
+from terraform_generation_bench.runner import TaskRunner, log_error, log_info
 from terraform_generation_bench.runner.utils import warm_provider_cache
 from terraform_generation_bench.terraform_generator import TerraformGenerator
-from terraform_generation_bench.llm_client import LLMClientFactory
 
 
 class BenchmarkRunner:
     """Runs benchmarks across multiple LLMs and tasks."""
-    
-    def __init__(self, generated_dir: Optional[Path] = None, 
-                 results_dir: Optional[Path] = None):
+
+    def __init__(self, generated_dir: Path | None = None, results_dir: Path | None = None):
         """Initialize benchmark runner.
-        
+
         Args:
             generated_dir: Directory for generated terraform files (default: ./generated)
             results_dir: Directory for benchmark results (default: ./results)
@@ -33,28 +32,29 @@ class BenchmarkRunner:
         self.results_dir = results_dir or (base_dir / "results")
         self.results_dir.mkdir(parents=True, exist_ok=True)
         self._display = None  # Set by run_benchmark_suite when TUI is active
-    
-    def run_single_benchmark(self, provider: str, model: str, task_id: str, 
-                            run_id: Optional[str] = None) -> Dict[str, Any]:
+
+    def run_single_benchmark(
+        self, provider: str, model: str, task_id: str, run_id: str | None = None
+    ) -> dict[str, Any]:
         """Run a single benchmark for one model and task.
-        
+
         Args:
             provider: LLM provider ("openai", "anthropic")
             model: Model name
             task_id: Task identifier
             run_id: Optional run identifier (auto-generated if not provided)
-            
+
         Returns:
             Benchmark result dictionary
         """
         if run_id is None:
             run_id = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-        
+
         # Replace both - and / with _ for valid directory names
         model_name = f"{provider}_{model.replace('-', '_').replace('/', '_')}"
-        
+
         log_info(f"Running benchmark: {model_name} on {task_id}")
-        
+
         result = {
             "provider": provider,
             "model": model,
@@ -62,9 +62,9 @@ class BenchmarkRunner:
             "task_id": task_id,
             "run_id": run_id,
             "timestamp": datetime.now().isoformat(),
-            "steps": {}
+            "steps": {},
         }
-        
+
         try:
             # Step 1: Load prompt from tasks directory
             prompt_file = Path("tasks") / "terraform_generation" / task_id / "prompt.txt"
@@ -73,11 +73,11 @@ class BenchmarkRunner:
                 prompt_file = Path.cwd() / "tasks" / "terraform_generation" / task_id / "prompt.txt"
             if not prompt_file.exists():
                 raise FileNotFoundError(f"Prompt file not found: tasks/terraform_generation/{task_id}/prompt.txt")
-            
+
             log_info(f"Loading prompt from: {prompt_file}")
-            with open(prompt_file, 'r') as f:
+            with open(prompt_file) as f:
                 prompt = f.read()
-            
+
             # Step 2: Generate Terraform code using the prompt text
             log_info(f"Step 1: Generating Terraform code with {model_name} using prompt.txt...")
             step_start = time.time()
@@ -100,74 +100,69 @@ class BenchmarkRunner:
                 "success": True,
                 "time": api_duration,
                 "files_generated": list(files.keys()),
-                "prompt_file": str(prompt_file)
+                "prompt_file": str(prompt_file),
             }
-            
+
             # Step 3: Save generated files to new directory
             work_dir = self.generated_dir / model_name / task_id / run_id
             work_dir.mkdir(parents=True, exist_ok=True)
             generator.save_files(files, work_dir)
             log_info(f"Generated files saved to: {work_dir}")
-            
+
             # Step 4: Run terraform pipeline
-            log_info(f"Step 2: Running Terraform pipeline...")
+            log_info("Step 2: Running Terraform pipeline...")
             runner = TaskRunner(
                 model_name=model_name,
                 task_id=task_id,
                 run_id=run_id,
                 generated_dir=self.generated_dir,
-                results_dir=self.results_dir
+                results_dir=self.results_dir,
             )
-            
+
             terraform_result = runner.run()
-            
+
             # Merge results
             result["steps"]["terraform"] = {
                 "success": terraform_result["pass"],
                 "failure_category": terraform_result.get("failure_category"),
                 "timings": terraform_result.get("timings", {}),
-                "tool_exit_codes": terraform_result.get("tool_exit_codes", {})
+                "tool_exit_codes": terraform_result.get("tool_exit_codes", {}),
             }
-            
+
             # Step 5: Get check results if available
             check_file = runner.result_dir / "check.json"
             if check_file.exists():
-                with open(check_file, 'r') as f:
+                with open(check_file) as f:
                     check_result = json.load(f)
                 result["steps"]["checks"] = check_result
-            
+
             # Overall result
             result["overall_pass"] = terraform_result["pass"]
-            result["total_time"] = (
-                result["steps"].get("generation", {}).get("time", 0) +
-                result["steps"].get("terraform", {}).get("timings", {}).get("total", 0)
-            )
-            
+            result["total_time"] = result["steps"].get("generation", {}).get("time", 0) + result["steps"].get(
+                "terraform", {}
+            ).get("timings", {}).get("total", 0)
+
         except Exception as e:
             log_error(f"Benchmark failed: {e}")
             result["overall_pass"] = False
             result["error"] = str(e)
-            result["steps"]["generation"] = {
-                "success": False,
-                "error": str(e)
-            }
-        
+            result["steps"]["generation"] = {"success": False, "error": str(e)}
+
         # Save result
         result_file = self.results_dir / model_name / task_id / run_id / "benchmark_result.json"
         result_file.parent.mkdir(parents=True, exist_ok=True)
-        with open(result_file, 'w') as f:
+        with open(result_file, "w") as f:
             json.dump(result, f, indent=2)
-        
+
         return result
-    
-    def run_benchmark_suite(self, models: List[Dict[str, str]],
-                           task_ids: List[str],
-                           max_workers: Optional[int] = None,
-                           display=None) -> Dict[str, Any]:
+
+    def run_benchmark_suite(
+        self, models: list[dict[str, str]], task_ids: list[str], max_workers: int | None = None, display=None
+    ) -> dict[str, Any]:
         """Run benchmark suite across multiple models and tasks.
 
         Args:
-            models: List of model configs [{"provider": "openai", "model": "gpt-4"}, ...]
+            models: List of model configs [{"provider": "anthropic", "model": "claude-opus-5-5"}, ...]
             task_ids: List of task IDs to test
             max_workers: Maximum number of parallel workers (default: min(CPU count, 20))
             display: Optional BenchmarkDisplay instance for TUI output.
@@ -175,16 +170,11 @@ class BenchmarkRunner:
         Returns:
             Suite results dictionary
         """
-        from concurrent.futures import ThreadPoolExecutor, as_completed
         import multiprocessing
+        from concurrent.futures import ThreadPoolExecutor, as_completed
 
         suite_start = time.time()
-        suite_results = {
-            "timestamp": datetime.now().isoformat(),
-            "models": models,
-            "tasks": task_ids,
-            "results": []
-        }
+        suite_results = {"timestamp": datetime.now().isoformat(), "models": models, "tasks": task_ids, "results": []}
 
         # Determine number of workers
         if max_workers is None:
@@ -219,10 +209,8 @@ class BenchmarkRunner:
                 }
 
                 # Collect results as they complete
-                completed = 0
-                for future in as_completed(future_to_job):
+                for completed, future in enumerate(as_completed(future_to_job), start=1):
                     provider, model, task_id = future_to_job[future]
-                    completed += 1
                     model_name = f"{provider}_{model.replace('-', '_').replace('/', '_')}"
                     try:
                         result = future.result()
@@ -234,13 +222,15 @@ class BenchmarkRunner:
                             display.on_job_complete(model_name, task_id, passed)
                     except Exception as e:
                         log_error(f"Failed to run benchmark for {provider}/{model} on {task_id}: {e}")
-                        suite_results["results"].append({
-                            "provider": provider,
-                            "model": model,
-                            "task_id": task_id,
-                            "overall_pass": False,
-                            "error": str(e)
-                        })
+                        suite_results["results"].append(
+                            {
+                                "provider": provider,
+                                "model": model,
+                                "task_id": task_id,
+                                "overall_pass": False,
+                                "error": str(e),
+                            }
+                        )
                         if display is not None:
                             display.on_job_complete(model_name, task_id, False)
         finally:
@@ -252,8 +242,7 @@ class BenchmarkRunner:
 
         # Save suite results
         suite_file = self.results_dir / f"benchmark_suite_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-        with open(suite_file, 'w') as f:
+        with open(suite_file, "w") as f:
             json.dump(suite_results, f, indent=2)
 
         return suite_results
-

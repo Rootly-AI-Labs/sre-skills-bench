@@ -4,21 +4,24 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from typing import Optional, Dict, Any, List
+from typing import Any
+
 import yaml
 
 
 class Colors:
     """ANSI color codes for terminal output."""
-    RED = '\033[0;31m'
-    GREEN = '\033[0;32m'
-    YELLOW = '\033[1;33m'
-    NC = '\033[0m'  # No Color
+
+    RED = "\033[0;31m"
+    GREEN = "\033[0;32m"
+    YELLOW = "\033[1;33m"
+    NC = "\033[0m"  # No Color
 
 
 def log_info(message: str) -> None:
     """Log an info message."""
     from terraform_generation_bench.display import get_log_callback
+
     cb = get_log_callback()
     if cb is not None:
         cb(f"[INFO] {message}")
@@ -29,6 +32,7 @@ def log_info(message: str) -> None:
 def log_error(message: str) -> None:
     """Log an error message."""
     from terraform_generation_bench.display import get_log_callback
+
     cb = get_log_callback()
     if cb is not None:
         cb(f"[ERROR] {message}")
@@ -39,6 +43,7 @@ def log_error(message: str) -> None:
 def log_warn(message: str) -> None:
     """Log a warning message."""
     from terraform_generation_bench.display import get_log_callback
+
     cb = get_log_callback()
     if cb is not None:
         cb(f"[WARN] {message}")
@@ -56,7 +61,7 @@ def _plugin_cache_dir() -> Path:
 _env_exported = False
 
 
-def export_localstack_env() -> Dict[str, str]:
+def export_localstack_env() -> dict[str, str]:
     """Export LocalStack AWS environment variables and Terraform plugin cache.
 
     Safe to call repeatedly — the actual work only happens once.
@@ -66,12 +71,12 @@ def export_localstack_env() -> Dict[str, str]:
     """
     global _env_exported
     env = {
-        'AWS_ACCESS_KEY_ID': 'test',
-        'AWS_SECRET_ACCESS_KEY': 'test',
-        'AWS_DEFAULT_REGION': 'us-east-1',
-        'AWS_REGION': 'us-east-1',
-        'TF_PLUGIN_CACHE_DIR': str(_plugin_cache_dir()),
-        'TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE': '1',
+        "AWS_ACCESS_KEY_ID": "test",
+        "AWS_SECRET_ACCESS_KEY": "test",
+        "AWS_DEFAULT_REGION": "us-east-1",
+        "AWS_REGION": "us-east-1",
+        "TF_PLUGIN_CACHE_DIR": str(_plugin_cache_dir()),
+        "TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE": "1",
     }
     os.environ.update(env)
     if not _env_exported:
@@ -96,11 +101,7 @@ def warm_provider_cache() -> None:
     try:
         # Minimal config that requires the AWS provider
         (tmp / "main.tf").write_text(
-            'terraform {\n'
-            '  required_providers {\n'
-            '    aws = { source = "hashicorp/aws" }\n'
-            '  }\n'
-            '}\n'
+            'terraform {\n  required_providers {\n    aws = { source = "hashicorp/aws" }\n  }\n}\n'
         )
 
         env = os.environ.copy()
@@ -127,69 +128,69 @@ def warm_provider_cache() -> None:
 
 def check_localstack() -> bool:
     """Check if LocalStack is running.
-    
+
     Returns:
         True if LocalStack is running, False otherwise.
     """
     try:
         import requests
-        response = requests.get('http://localhost:4566/_localstack/health', timeout=5)
+
+        response = requests.get("http://localhost:4566/_localstack/health", timeout=5)
         if response.status_code == 200:
             log_info("LocalStack is running")
             return True
     except Exception:
         pass
-    
+
     log_error("LocalStack is not running. Please start it with: docker compose up -d")
     return False
 
 
-def load_spec(spec_file: Path) -> Dict[str, Any]:
+def load_spec(spec_file: Path) -> dict[str, Any]:
     """Load task specification from YAML file.
-    
+
     Args:
         spec_file: Path to the spec.yaml file.
-        
+
     Returns:
         Dictionary containing the spec data.
     """
-    with open(spec_file, 'r') as f:
+    with open(spec_file) as f:
         return yaml.safe_load(f)
 
 
-def get_var(spec: Dict[str, Any], var_name: str) -> Any:
+def get_var(spec: dict[str, Any], var_name: str) -> Any:
     """Get a variable value from spec.
-    
+
     Args:
         spec: The loaded spec dictionary.
         var_name: Name of the variable to get.
-        
+
     Returns:
         The variable value, or None if not found.
     """
-    return spec.get('vars', {}).get(var_name)
+    return spec.get("vars", {}).get(var_name)
 
 
-def run_command(cmd: List[str], cwd: Optional[Path] = None, 
-                capture_output: bool = True, 
-                check: bool = True,
-                timeout: Optional[int] = None) -> subprocess.CompletedProcess:
+def run_command(
+    cmd: list[str], cwd: Path | None = None, capture_output: bool = True, check: bool = True, timeout: int | None = None
+) -> subprocess.CompletedProcess:
     """Run a shell command.
-    
+
     Args:
         cmd: Command to run as a list of strings.
         cwd: Working directory for the command.
         capture_output: Whether to capture stdout/stderr.
         check: Whether to raise on non-zero exit code.
         timeout: Timeout in seconds (default: None for no timeout).
-        
+
     Returns:
         CompletedProcess object.
     """
     env = os.environ.copy()
     export_localstack_env()
     env.update(os.environ)
-    
+
     try:
         result = subprocess.run(
             cmd,
@@ -198,7 +199,7 @@ def run_command(cmd: List[str], cwd: Optional[Path] = None,
             text=True,
             check=check,
             env=env,
-            timeout=timeout
+            timeout=timeout,
         )
         return result
     except subprocess.TimeoutExpired as e:
@@ -214,4 +215,3 @@ def run_command(cmd: List[str], cwd: Optional[Path] = None,
             log_error(f"stdout: {e.stdout}")
             log_error(f"stderr: {e.stderr}")
         raise
-

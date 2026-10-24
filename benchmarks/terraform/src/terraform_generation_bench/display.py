@@ -3,7 +3,7 @@
 import threading
 import time
 from collections import defaultdict
-from typing import Callable, Optional
+from collections.abc import Callable
 
 from rich.console import Console, ConsoleOptions, Group, RenderResult
 from rich.layout import Layout
@@ -17,15 +17,15 @@ from rich.text import Text
 # Global log callback (thread-safe via the GIL for simple attribute access)
 # ---------------------------------------------------------------------------
 
-_log_callback: Optional[Callable[[str], None]] = None
+_log_callback: Callable[[str], None] | None = None
 
 
-def set_log_callback(cb: Optional[Callable[[str], None]]) -> None:
+def set_log_callback(cb: Callable[[str], None] | None) -> None:
     global _log_callback
     _log_callback = cb
 
 
-def get_log_callback() -> Optional[Callable[[str], None]]:
+def get_log_callback() -> Callable[[str], None] | None:
     return _log_callback
 
 
@@ -65,19 +65,15 @@ class BenchmarkDisplay:
             MofNCompleteColumn(),
             console=self._console,
         )
-        self._progress_task = self._progress.add_task(
-            "Benchmark", total=total_jobs
-        )
-        self._live: Optional[Live] = None
+        self._progress_task = self._progress.add_task("Benchmark", total=total_jobs)
+        self._live: Live | None = None
 
     # -- Rich renderable protocol ---------------------------------------------
     # By implementing __rich_console__, Live's auto-refresh thread calls
     # _render() on every tick (4×/sec), keeping elapsed time and logs fresh
     # even when no new events arrive.
 
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
+    def __rich_console__(self, console: Console, options: ConsoleOptions) -> RenderResult:
         yield self._render()
 
     # -- public API ----------------------------------------------------------
@@ -107,11 +103,15 @@ class BenchmarkDisplay:
     def on_api_start(self, model: str, task: str) -> None:
         """Record the start of an LLM API call."""
         with self._lock:
-            self._api_calls.append({
-                "model": model, "task": task,
-                "start": time.monotonic(),
-                "status": "running", "duration": None,
-            })
+            self._api_calls.append(
+                {
+                    "model": model,
+                    "task": task,
+                    "start": time.monotonic(),
+                    "status": "running",
+                    "duration": None,
+                }
+            )
             # Keep only the last 10
             if len(self._api_calls) > 10:
                 self._api_calls = self._api_calls[-10:]
@@ -181,9 +181,7 @@ class BenchmarkDisplay:
         table.add_column("Fail", style="red", justify="right")
 
         with self._lock:
-            models = sorted(
-                set(list(self._model_pass.keys()) + list(self._model_fail.keys()))
-            )
+            models = sorted(set(list(self._model_pass.keys()) + list(self._model_fail.keys())))
             for m in models:
                 table.add_row(
                     _truncate(m, 36),
@@ -228,9 +226,7 @@ class BenchmarkDisplay:
         stats_parts.append(footer)
 
         # Combine into right panel
-        layout["stats"].update(
-            Panel(Group(*stats_parts), title="Progress", border_style="dim")
-        )
+        layout["stats"].update(Panel(Group(*stats_parts), title="Progress", border_style="dim"))
 
         return layout
 

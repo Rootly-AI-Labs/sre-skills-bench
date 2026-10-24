@@ -8,8 +8,7 @@ end-to-end code generation and execution against LocalStack.
 
 ```bash
 cd benchmarks/terraform
-uv venv && source .venv/bin/activate
-uv pip install -e .
+uv sync                         # creates .venv from uv.lock
 docker compose up -d            # LocalStack
 ./run.sh                        # or use the CLI directly (see below)
 ```
@@ -87,19 +86,22 @@ Reports are generated in `reports/`:
 
 ```bash
 # Run single benchmark
-python -m terraform_generation_bench.benchmark_cli benchmark \
-  --provider openai \
-  --model gpt-4 \
+uv run python -m terraform_generation_bench.benchmark_cli benchmark \
+  --provider anthropic \
+  --model claude-opus-5-5 \
   --task-id task_vpc_3subnets_3ec2
 
 # Run benchmark suite
-python -m terraform_generation_bench.benchmark_cli suite \
+uv run python -m terraform_generation_bench.benchmark_cli suite \
   --models models.json \
   --tasks all \
   --runs-per-model 1
 
+# List models available to your account (Anthropic Models API or OpenRouter)
+uv run python -m terraform_generation_bench.benchmark_cli list-models --provider anthropic
+
 # Generate comprehensive report
-python -m terraform_generation_bench.benchmark_cli report \
+uv run python -m terraform_generation_bench.benchmark_cli report \
   --format comprehensive \
   --output reports/comprehensive.md
 ```
@@ -110,8 +112,8 @@ python -m terraform_generation_bench.benchmark_cli report \
 
 ```json
 [
-  {"provider": "openai", "model": "gpt-4"},
-  {"provider": "anthropic", "model": "claude-3-5-sonnet-20241022"},
+  {"provider": "openai", "model": "gpt-5"},
+  {"provider": "anthropic", "model": "claude-opus-5-5"},
   {"provider": "openrouter", "model": "google/gemini-2.5-flash"}
 ]
 ```
@@ -120,7 +122,7 @@ python -m terraform_generation_bench.benchmark_cli report \
 
 ```bash
 export OPENAI_API_KEY=your_key
-export ANTHROPIC_API_KEY=your_key
+export ANTHROPIC_API_KEY=your_key   # or use an `ant auth login` profile
 export OPENROUTER_API_KEY=your_key  # Optional, used as fallback
 ```
 
