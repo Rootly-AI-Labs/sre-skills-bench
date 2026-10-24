@@ -20,7 +20,7 @@ It is organized as self-contained sub-benchmarks along a **comprehend → write 
 ```
 .
 ├── benchmarks/
-│   ├── general-knowledge/   # COMPREHEND: GMCQ — match a bug-fix issue to the PR that closed it (runs via `openbench eval rootly_gmcq`)
+│   ├── general-knowledge/   # COMPREHEND: GMCQ — match a bug-fix issue to the PR that closed it (runs via openbench: `bench eval rootly_gmcq`)
 │   ├── code-reasoning/      # COMPREHEND→WRITE: reason about real PR diffs across 5 tasks, environment-free (data + judge prompts; no runner yet)
 │   ├── terraform/           # WRITE: generate executable Terraform, graded against LocalStack (self-contained: own pyproject + run.sh)
 │   └── incident-response/   # ACT: replay postmortems as live scenarios (planned; placeholder)

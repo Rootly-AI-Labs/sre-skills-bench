@@ -93,7 +93,7 @@ Measured with the [OpenAI evals](https://github.com/openai/evals) framework.
 ## Roadmap
 
 - Grow the dataset beyond v0.1 and broaden repository coverage.
-- Refresh the leaderboard against current frontier models via `openbench eval rootly_gmcq`.
+- Refresh the leaderboard against current frontier models via `bench eval rootly_gmcq` (openbench).
 
 ## Credits
 
