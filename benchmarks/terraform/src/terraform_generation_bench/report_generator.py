@@ -5,6 +5,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from terraform_generation_bench.runner.utils import model_dir_name
+
 
 class ReportGenerator:
     """Generates reports from benchmark results."""
@@ -330,8 +332,7 @@ class ReportGenerator:
                     for model_config in models_config:
                         provider = model_config.get("provider", "")
                         model = model_config.get("model", "")
-                        # Generate model name using same logic as benchmark.py
-                        model_name = f"{provider}_{model.replace('-', '_').replace('/', '_')}"
+                        model_name = model_dir_name(provider, model, model_config.get("effort"))
                         expected_models.add(model_name)
                 except Exception:
                     # Fall back to directory discovery if models.json can't be read

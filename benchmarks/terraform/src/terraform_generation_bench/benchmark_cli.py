@@ -41,6 +41,7 @@ def main():
         "--provider", required=True, choices=["openai", "anthropic", "openrouter"], help="LLM provider"
     )
     gen_parser.add_argument("--model", required=True, help="Model name")
+    gen_parser.add_argument("--effort", help="Effort level (anthropic only): low, medium, high, xhigh, max")
     gen_parser.add_argument("--task-id", required=True, help="Task identifier")
     gen_parser.add_argument("--run-id", help="Run identifier (auto-generated if not provided)")
 
@@ -50,6 +51,7 @@ def main():
         "--provider", required=True, choices=["openai", "anthropic", "openrouter"], help="LLM provider"
     )
     bench_parser.add_argument("--model", required=True, help="Model name")
+    bench_parser.add_argument("--effort", help="Effort level (anthropic only): low, medium, high, xhigh, max")
     bench_parser.add_argument("--task-id", required=True, help="Task identifier")
     bench_parser.add_argument("--run-id", help="Run identifier")
 
@@ -124,6 +126,7 @@ def main():
 
     if args.command == "generate":
         from terraform_generation_bench.llm_client import LLMClientFactory
+        from terraform_generation_bench.runner.utils import model_dir_name
         from terraform_generation_bench.terraform_generator import TerraformGenerator
 
         # Load prompt from tasks directory
@@ -142,13 +145,12 @@ def main():
 
         # Generate code using the prompt text
         print(f"Generating Terraform code with {args.provider}/{args.model}...")
-        llm_client = LLMClientFactory.create_client(args.provider, args.model)
+        llm_client = LLMClientFactory.create_client(args.provider, args.model, effort=args.effort)
         generator = TerraformGenerator(llm_client)
         files = generator.generate(prompt, args.task_id)
 
         run_id = args.run_id or f"{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-        # Replace both - and / with _ for valid directory names
-        model_name = f"{args.provider}_{args.model.replace('-', '_').replace('/', '_')}"
+        model_name = model_dir_name(args.provider, args.model, args.effort)
         work_dir = Path(__file__).parent.parent.parent / "generated" / model_name / args.task_id / run_id
         work_dir.mkdir(parents=True, exist_ok=True)
 
@@ -157,7 +159,7 @@ def main():
         print(f"Files: {', '.join(files.keys())}")
 
     elif args.command == "benchmark":
-        result = runner.run_single_benchmark(args.provider, args.model, args.task_id, args.run_id)
+        result = runner.run_single_benchmark(args.provider, args.model, args.task_id, args.run_id, effort=args.effort)
 
         print("\n" + "=" * 80)
         print("BENCHMARK RESULT")

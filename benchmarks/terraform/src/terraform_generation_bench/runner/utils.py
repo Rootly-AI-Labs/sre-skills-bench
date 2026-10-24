@@ -18,6 +18,13 @@ class Colors:
     NC = "\033[0m"  # No Color
 
 
+def model_dir_name(provider: str, model: str, effort: str | None = None) -> str:
+    """Build the results/generated directory name for a model config."""
+    # Replace both - and / with _ for valid directory names
+    name = f"{provider}_{model.replace('-', '_').replace('/', '_')}"
+    return f"{name}_effort_{effort}" if effort else name
+
+
 def log_info(message: str) -> None:
     """Log an info message."""
     from terraform_generation_bench.display import get_log_callback

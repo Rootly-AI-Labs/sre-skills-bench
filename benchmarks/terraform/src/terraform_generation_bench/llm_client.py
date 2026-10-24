@@ -111,16 +111,30 @@ class AnthropicClient(LLMClient):
         except anthropic.APIError:
             return []
 
-    def __init__(self, model: str = "claude-opus-5-5", api_key: str | None = None):
+    def __init__(self, model: str = "claude-opus-5-5", api_key: str | None = None, effort: str | None = None):
         """Initialize Anthropic client.
 
         Args:
             model: Model name (e.g., "claude-opus-5-5", "claude-sonnet-5-5")
             api_key: Anthropic API key (defaults to SDK credential resolution, e.g. ANTHROPIC_API_KEY)
+            effort: Optional effort level ("low", "medium", "high", "xhigh", "max"); model default if unset
         """
         self.model = model
+        self.effort = effort
         self.client = anthropic.Anthropic(api_key=api_key, max_retries=3)
         self._thinking_config: dict | None = None
+        if effort is not None:
+            self._check_effort_supported(effort)
+
+    def _check_effort_supported(self, effort: str) -> None:
+        """Fail fast if the model doesn't accept this effort level (Models API capabilities)."""
+        try:
+            caps = self.client.models.retrieve(self.model).capabilities
+        except anthropic.APIError:
+            return  # let the messages call surface the real error
+        level = getattr(caps.effort, effort, None)
+        if not caps.effort.supported or level is None or not level.supported:
+            raise ValueError(f"Model '{self.model}' does not support effort '{effort}'")
 
     def _thinking(self, reasoning_tokens: int) -> dict:
         """Pick the thinking config from the model's live capabilities (Models API).
@@ -154,6 +168,7 @@ class AnthropicClient(LLMClient):
                 thinking=self._thinking(reasoning_tokens),
                 system="You are a Terraform expert. Generate only Terraform code blocks.",
                 messages=[{"role": "user", "content": prompt}],
+                **({"output_config": {"effort": self.effort}} if self.effort else {}),
                 **kwargs,
             ) as stream:
                 message = stream.get_final_message()
@@ -428,7 +443,11 @@ class LLMClientFactory:
 
     @staticmethod
     def create_client(
-        provider: str, model: str, api_key: str | None = None, use_openrouter_fallback: bool = True
+        provider: str,
+        model: str,
+        api_key: str | None = None,
+        use_openrouter_fallback: bool = True,
+        effort: str | None = None,
     ) -> LLMClient:
         """Create an LLM client for the specified provider.
 
@@ -441,11 +460,16 @@ class LLMClientFactory:
             model: Model name
             api_key: Optional API key (overrides environment check)
             use_openrouter_fallback: If True, fallback to OpenRouter when direct key unavailable
+            effort: Optional effort level; only supported for provider "anthropic"
 
         Returns:
             LLMClient instance
         """
         provider = provider.lower()
+
+        # Effort is only wired up for the Anthropic API; refuse rather than silently ignore it
+        if effort is not None and provider != "anthropic":
+            raise ValueError(f"effort is only supported for provider 'anthropic', not '{provider}'")
 
         # If provider is explicitly "openrouter", always use OpenRouter
         if provider == "openrouter":
@@ -464,7 +488,7 @@ class LLMClientFactory:
             if provider == "openai":
                 return OpenAIClient(model=model, api_key=api_key)
             elif provider == "anthropic":
-                return AnthropicClient(model=model, api_key=api_key)
+                return AnthropicClient(model=model, api_key=api_key, effort=effort)
             elif provider == "edgee":
                 return EdgeeClient(model=model, api_key=api_key)
         elif use_openrouter_fallback and has_openrouter_key:
@@ -473,6 +497,10 @@ class LLMClientFactory:
             # 2. OpenRouter key is set
             # 3. Fallback is enabled
             openrouter_model = LLMClientFactory._get_openrouter_model_name(provider, model)
+            if openrouter_model and effort is not None:
+                raise ValueError(
+                    f"effort '{effort}' needs direct Anthropic credentials; refusing OpenRouter fallback for {model}"
+                )
             if openrouter_model:
                 import sys
 
@@ -483,7 +511,7 @@ class LLMClientFactory:
                 if provider == "openai":
                     return OpenAIClient(model=model, api_key=api_key)
                 elif provider == "anthropic":
-                    return AnthropicClient(model=model, api_key=api_key)
+                    return AnthropicClient(model=model, api_key=api_key, effort=effort)
                 elif provider == "edgee":
                     return EdgeeClient(model=model, api_key=api_key)
         elif use_openrouter_fallback and not has_openrouter_key:
@@ -492,7 +520,7 @@ class LLMClientFactory:
             if provider == "openai":
                 return OpenAIClient(model=model, api_key=api_key)
             elif provider == "anthropic":
-                return AnthropicClient(model=model, api_key=api_key)
+                return AnthropicClient(model=model, api_key=api_key, effort=effort)
             elif provider == "edgee":
                 return EdgeeClient(model=model, api_key=api_key)
 
@@ -500,7 +528,7 @@ class LLMClientFactory:
         if provider == "openai":
             return OpenAIClient(model=model, api_key=api_key)
         elif provider == "anthropic":
-            return AnthropicClient(model=model, api_key=api_key)
+            return AnthropicClient(model=model, api_key=api_key, effort=effort)
         elif provider == "edgee":
             return EdgeeClient(model=model, api_key=api_key)
         else:
