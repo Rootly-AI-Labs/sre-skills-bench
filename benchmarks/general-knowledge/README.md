@@ -52,14 +52,14 @@ GMCQ ships as a first-class benchmark in [openbench](https://github.com/groq/ope
 (`rootly_gmcq`), which pulls the dataset from Hugging Face — so it runs out of the box:
 
 ```bash
-uv pip install openbench
-export GROQ_API_KEY=...        # or OPENAI_API_KEY, ANTHROPIC_API_KEY, etc.
+export ANTHROPIC_API_KEY=...   # or GROQ_API_KEY, OPENAI_API_KEY, etc.
 
+# `mcp<2`: openbench doesn't pin mcp, and mcp 2.x breaks its CLI at import time
 # Whole dataset
-bench eval rootly_gmcq --model "groq/llama-3.1-8b-instant"
+uvx --from openbench --with 'mcp<2' bench eval rootly_gmcq --model "anthropic/claude-opus-5-5"
 
 # A single repository subtask (e.g. mastodon, bluesky, chroma, cloudflare, duckdb, tailscale)
-bench eval rootly_gmcq --model "groq/llama-3.1-8b-instant" -T subtask=mastodon
+uvx --from openbench --with 'mcp<2' bench eval rootly_gmcq --model "anthropic/claude-opus-5-5" -T subtask=mastodon
 ```
 
 The local snapshot in `data/` uses the same record schema openbench expects, so it
@@ -93,7 +93,7 @@ Measured with the [OpenAI evals](https://github.com/openai/evals) framework.
 ## Roadmap
 
 - Grow the dataset beyond v0.1 and broaden repository coverage.
-- Refresh the leaderboard against current frontier models via `openbench eval rootly_gmcq`.
+- Refresh the leaderboard against current frontier models via `bench eval rootly_gmcq` (openbench).
 
 ## Credits
 
