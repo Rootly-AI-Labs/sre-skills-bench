@@ -113,10 +113,17 @@ uv run python -m terraform_generation_bench.benchmark_cli report \
 ```json
 [
   {"provider": "openai", "model": "gpt-5"},
-  {"provider": "anthropic", "model": "claude-opus-5-5"},
+  {"provider": "anthropic", "model": "claude-opus-5-5", "effort": "high"},
   {"provider": "openrouter", "model": "google/gemini-2.5-flash"}
 ]
 ```
+
+`effort` is optional and Anthropic-only (`low`, `medium`, `high`, `xhigh`, `max`).
+Model defaults differ (Claude Opus 5.5 defaults to `medium`, most others to `high`), so
+set it explicitly when comparing models. Unsupported levels fail fast using the
+Models API capabilities. When set, results go to `<provider>_<model>_effort_<level>/`
+so the same model at different efforts doesn't collide; `--effort` works on the
+`generate` and `benchmark` commands too.
 
 ### Environment Variables
 

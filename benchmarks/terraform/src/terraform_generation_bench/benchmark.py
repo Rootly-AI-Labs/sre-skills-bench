@@ -12,7 +12,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from terraform_generation_bench.llm_client import LLMClientFactory
 from terraform_generation_bench.runner import TaskRunner, log_error, log_info
-from terraform_generation_bench.runner.utils import warm_provider_cache
+from terraform_generation_bench.runner.utils import model_dir_name, warm_provider_cache
 from terraform_generation_bench.terraform_generator import TerraformGenerator
 
 
@@ -34,7 +34,7 @@ class BenchmarkRunner:
         self._display = None  # Set by run_benchmark_suite when TUI is active
 
     def run_single_benchmark(
-        self, provider: str, model: str, task_id: str, run_id: str | None = None
+        self, provider: str, model: str, task_id: str, run_id: str | None = None, effort: str | None = None
     ) -> dict[str, Any]:
         """Run a single benchmark for one model and task.
 
@@ -43,6 +43,7 @@ class BenchmarkRunner:
             model: Model name
             task_id: Task identifier
             run_id: Optional run identifier (auto-generated if not provided)
+            effort: Optional effort level (Anthropic only); model default if unset
 
         Returns:
             Benchmark result dictionary
@@ -50,14 +51,14 @@ class BenchmarkRunner:
         if run_id is None:
             run_id = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 
-        # Replace both - and / with _ for valid directory names
-        model_name = f"{provider}_{model.replace('-', '_').replace('/', '_')}"
+        model_name = model_dir_name(provider, model, effort)
 
         log_info(f"Running benchmark: {model_name} on {task_id}")
 
         result = {
             "provider": provider,
             "model": model,
+            "effort": effort,
             "model_name": model_name,
             "task_id": task_id,
             "run_id": run_id,
@@ -85,7 +86,7 @@ class BenchmarkRunner:
             if self._display is not None:
                 self._display.on_api_start(model_name, task_id)
 
-            llm_client = LLMClientFactory.create_client(provider, model)
+            llm_client = LLMClientFactory.create_client(provider, model, effort=effort)
             generator = TerraformGenerator(llm_client)
             api_success = False
             try:
@@ -162,7 +163,8 @@ class BenchmarkRunner:
         """Run benchmark suite across multiple models and tasks.
 
         Args:
-            models: List of model configs [{"provider": "anthropic", "model": "claude-opus-5-5"}, ...]
+            models: List of model configs [{"provider": "anthropic", "model": "claude-opus-5-5", "effort": "high"}, ...]
+                ("effort" is optional)
             task_ids: List of task IDs to test
             max_workers: Maximum number of parallel workers (default: min(CPU count, 20))
             display: Optional BenchmarkDisplay instance for TUI output.
@@ -185,8 +187,9 @@ class BenchmarkRunner:
         for model_config in models:
             provider = model_config["provider"]
             model = model_config["model"]
+            effort = model_config.get("effort")
             for task_id in task_ids:
-                jobs.append((provider, model, task_id))
+                jobs.append((provider, model, task_id, effort))
 
         log_info(f"Running {len(jobs)} benchmarks with {max_workers} parallel workers...")
 
@@ -204,14 +207,19 @@ class BenchmarkRunner:
             with ThreadPoolExecutor(max_workers=max_workers) as executor:
                 # Submit all jobs
                 future_to_job = {
-                    executor.submit(self.run_single_benchmark, provider, model, task_id): (provider, model, task_id)
-                    for provider, model, task_id in jobs
+                    executor.submit(self.run_single_benchmark, provider, model, task_id, effort=effort): (
+                        provider,
+                        model,
+                        task_id,
+                        effort,
+                    )
+                    for provider, model, task_id, effort in jobs
                 }
 
                 # Collect results as they complete
                 for completed, future in enumerate(as_completed(future_to_job), start=1):
-                    provider, model, task_id = future_to_job[future]
-                    model_name = f"{provider}_{model.replace('-', '_').replace('/', '_')}"
+                    provider, model, task_id, effort = future_to_job[future]
+                    model_name = model_dir_name(provider, model, effort)
                     try:
                         result = future.result()
                         suite_results["results"].append(result)
@@ -226,6 +234,7 @@ class BenchmarkRunner:
                             {
                                 "provider": provider,
                                 "model": model,
+                                "effort": effort,
                                 "task_id": task_id,
                                 "overall_pass": False,
                                 "error": str(e),

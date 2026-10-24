@@ -15,8 +15,8 @@ if [ ! -f "models.json" ]; then
     echo "Warning: models.json not found. Using default models."
     cat > models.json << EOF_MODELS
 [
-  {"provider": "anthropic", "model": "claude-opus-5-5"},
-  {"provider": "anthropic", "model": "claude-sonnet-5-5"}
+  {"provider": "anthropic", "model": "claude-opus-5-5", "effort": "high"},
+  {"provider": "anthropic", "model": "claude-sonnet-5-5", "effort": "high"}
 ]
 EOF_MODELS
 fi
